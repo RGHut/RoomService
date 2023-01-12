@@ -1,14 +1,23 @@
 package CG.RoomService.Models;
 
+import java.time.LocalDateTime;
+
 public class Room {
+
+    private String name;
     private int floor;
     private int maxOccupancy;
     private boolean isAccessible;
 
-    public Room(int floor, int maxOccupancy, boolean isAccessible) {
+    public Room(String name, int floor, int maxOccupancy, boolean isAccessible) {
+        this.name = name;
         this.floor = floor;
         this.maxOccupancy = maxOccupancy;
         this.isAccessible = isAccessible;
+    }
+
+    public Room(int floor, int maxOccupancy, boolean isAccessible) {
+        this("", floor, maxOccupancy, isAccessible);
     }
 
     public Room(int floor, int maxOccupancy) {
@@ -21,6 +30,18 @@ public class Room {
 
     public Room() {
         this(1);
+    }
+
+    public Booking makeBooking(LocalDateTime start) {
+        return(new Booking(this, start));
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getFloor() {

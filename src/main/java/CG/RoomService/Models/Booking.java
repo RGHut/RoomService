@@ -2,18 +2,18 @@ package CG.RoomService.Models;
 
 import java.time.LocalDateTime;
 
-public class Bookings {
+public class Booking {
         private final Room room;
         private final LocalDateTime timeStart;
         private final LocalDateTime timeEnd;
 
-        public Bookings(Room room, LocalDateTime timeStart, LocalDateTime timeEnd) {
+        public Booking(Room room, LocalDateTime timeStart, LocalDateTime timeEnd) {
                 this.room = room;
                 this.timeStart = timeStart;
                 this.timeEnd = timeEnd;
         }
 
-        public Bookings(Room room, LocalDateTime timeStart) {
+        public Booking(Room room, LocalDateTime timeStart) {
                 this(room, timeStart, timeStart.plusHours(1));
         }
 
