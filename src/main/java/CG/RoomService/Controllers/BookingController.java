@@ -3,6 +3,7 @@ package CG.RoomService.Controllers;
 import CG.RoomService.Models.Booking;
 import CG.RoomService.Models.Building;
 import CG.RoomService.Models.Room;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 
 @RestController
 public class BookingController {
-
     private final ArrayList<Booking> bookings = new ArrayList<Booking>();
 
     @GetMapping("/bookings")
@@ -42,6 +42,28 @@ public class BookingController {
         return ResponseEntity.status(400).body("{\"error\":" + "\"Building does not exists!\"" + "}");
     }
 
+    @PostMapping("/cancelBooking")
+    public ResponseEntity<?> cancelBooking(@RequestParam String token) {
+        for (Booking booking: bookings) {
+            if (booking.getToken().toString().equals(token)) {
+                bookings.remove(booking);
+                return ResponseEntity.status(200).body("{\"booking removed\"}");
+            }
+        }
+        return ResponseEntity.status(400).body("{\"error\":" + "\"booking does not exist!\"}");
+    }
+
+    @PostMapping("/changeBooking")
+    public ResponseEntity<?> changeBooking(@RequestParam String token, @RequestParam LocalDateTime time) {
+        for (Booking booking: bookings) {
+            if (booking.getToken().toString().equals(token)) {
+                booking.setTimeStart(time);
+                return ResponseEntity.status(200).body("{\"booking changed to " + time + "\"}");
+            }
+        }
+        return ResponseEntity.status(400).body("{\"error\":\"booking does not exist!\"}");
+    }
+
     private boolean isBooked(Room room, LocalDateTime time) {
         boolean booked = false;
         for (Booking booking : bookings) {
@@ -53,5 +75,4 @@ public class BookingController {
         }
         return booked;
     }
-
 }

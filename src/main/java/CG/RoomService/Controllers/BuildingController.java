@@ -1,6 +1,8 @@
 package CG.RoomService.Controllers;
+
 import CG.RoomService.Models.Building;
 import CG.RoomService.Models.Room;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,12 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 
-
 @RestController
 public class BuildingController {
 
     private static final ArrayList<Building> buildings = new ArrayList<Building>();
-
 
     @GetMapping("/buildings")
     public static ArrayList<Building> getBuildings() {
@@ -42,7 +42,6 @@ public class BuildingController {
         Building building = new Building(name);
         buildings.add(building);
         return ResponseEntity.status(200).body("{\"created\":\"" + name + "\"}");
-
     }
 
     @PostMapping("/addRoom")
@@ -66,5 +65,14 @@ public class BuildingController {
             }
         }
         return ResponseEntity.status(200).body("{\"error\":" + "\"Unexpected error!\"" + "}");
+    }
+
+    @GetMapping("/switchPandemicMode")
+    public void switchPandemicMode() {
+        for (Building building: buildings) {
+            for (Room room: building.getRooms()){
+                room.switchPandemicMode();
+            }
+        }
     }
 }

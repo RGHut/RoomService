@@ -3,11 +3,11 @@ package CG.RoomService.Models;
 import java.time.LocalDateTime;
 
 public class Room {
-
-    private String name;
-    private int floor;
+    private final String name;
+    private final int floor;
     private int maxOccupancy;
     private boolean isAccessible;
+    private boolean pandemicMode = false;
 
     public Room(String name, int floor, int maxOccupancy, boolean isAccessible) {
         this.name = name;
@@ -40,16 +40,8 @@ public class Room {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getFloor() {
         return floor;
-    }
-
-    public void setFloor(int floor) {
-        this.floor = floor;
     }
 
     public int getMaxOccupancy() {
@@ -60,6 +52,16 @@ public class Room {
         this.maxOccupancy = maxOccupancy;
     }
 
+    public void switchPandemicMode(){
+        if (pandemicMode) {
+            setMaxOccupancy(maxOccupancy * 2);
+            pandemicMode = false;
+        } else {
+            setMaxOccupancy(maxOccupancy / 2);
+            pandemicMode = true;
+        }
+    }
+
     public boolean isAccessible() {
         return isAccessible;
     }
@@ -67,5 +69,4 @@ public class Room {
     public void setAccessible(boolean accessible) {
         isAccessible = accessible;
     }
-
 }

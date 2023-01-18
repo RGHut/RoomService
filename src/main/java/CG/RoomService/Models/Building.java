@@ -3,7 +3,7 @@ package CG.RoomService.Models;
 import java.util.ArrayList;
 
 public class Building {
-    private String name;
+    private final String name;
     private ArrayList<Room> rooms = new ArrayList<Room>();
 
     public Building(String name, ArrayList<Room> rooms) {
@@ -25,10 +25,6 @@ public class Building {
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void addRoom(String name, int floor, int maxOccupancy, boolean accessible) {
