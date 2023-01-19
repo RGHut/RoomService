@@ -31,8 +31,9 @@ public class BookingController {
                         if (isBooked(room, time)) {
                             return ResponseEntity.status(400).body("{\"error\":\"Room is already booked!\"" + "}");
                         } else {
-                            bookings.add(new Booking(room, time));
-                            return ResponseEntity.status(200).body("{\"Booking created\"}");
+                            Booking booking = new Booking(room, time);
+                            bookings.add(booking);
+                            return ResponseEntity.status(200).body("{\"Booking created\" " + booking.getToken() + "}");
                         }
                     }
                 }
@@ -62,6 +63,16 @@ public class BookingController {
             }
         }
         return ResponseEntity.status(400).body("{\"error\":\"booking does not exist!\"}");
+    }
+
+    @PostMapping("/getBooking")
+    public ResponseEntity<?> getBooking(@RequestParam String token){
+        for (Booking booking: bookings) {
+            if (booking.getToken().toString().equals(token)) {
+                return ResponseEntity.status(200).body(booking);
+            }
+        }
+        return ResponseEntity.status(400).body("{\"error\":\"booking does not exist\"}");
     }
 
     private boolean isBooked(Room room, LocalDateTime time) {

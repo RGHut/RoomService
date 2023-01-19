@@ -67,6 +67,21 @@ public class BuildingController {
         return ResponseEntity.status(200).body("{\"error\":" + "\"Unexpected error!\"" + "}");
     }
 
+    @PostMapping("/getRoom")
+    public ResponseEntity<?> getRoom(@RequestParam String buildingName, @RequestParam String roomName) {
+        for (Building building : buildings) {
+            if (building.getName().equals(roomName)) {
+                for (Room room : building.getRooms()) {
+                    if (room.getName().equals(roomName)) {
+                        return ResponseEntity.status(200).body(room);
+                    }
+                }
+                return ResponseEntity.status(400).body("{\"error\":\"room does not exist\"}");
+            }
+        }
+        return ResponseEntity.status(400).body("{\"error\":\"building does not exist\"}");
+    }
+
     @GetMapping("/switchPandemicMode")
     public void switchPandemicMode() {
         for (Building building: buildings) {
