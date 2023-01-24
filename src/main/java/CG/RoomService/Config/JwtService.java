@@ -5,19 +5,28 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+
 
 @Service
 public class JwtService {
+    @Value("${jwt.token.validity}")
+    public long TOKEN_VALIDITY;
 
-    private static final String SECRET_KEY = "2948404D635166546A576E5A7234753778214125442A472D4B614E645267556B" ;
+    @Value("${jwt.authorities.key}")
+    public String AUTHORITIES_KEY;
+
+    @Value("${jwt.secret.key}")
+    public String SECRET_KEY;
+
+
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -30,19 +39,29 @@ public class JwtService {
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
+
     public String generateToken(
             Map<String, Object> extraClaims,
             UserDetails userDetails
     ) {
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+
+        ArrayList<String> authsList = new ArrayList<>(authorities.size());
+
+        for (GrantedAuthority authority : authorities) {
+            authsList.add(authority.getAuthority());
+        }
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
+                .claim("role", authsList)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * TOKEN_VALIDITY))
                 .signWith(getSigninKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
+
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);

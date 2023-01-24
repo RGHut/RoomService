@@ -1,6 +1,10 @@
 package CG.RoomService.User;
 
 public enum Role {
-    USER,
+    GUEST,
+    WERKNEMER,
     ADMIN,
+    SYSTEM_ADMIN,
+
+
 }
