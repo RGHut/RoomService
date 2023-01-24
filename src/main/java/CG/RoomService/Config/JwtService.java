@@ -55,7 +55,7 @@ public class JwtService {
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
-                .claim("role", authsList)
+                .claim(AUTHORITIES_KEY, authsList)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * TOKEN_VALIDITY))
                 .signWith(getSigninKey(), SignatureAlgorithm.HS256)
