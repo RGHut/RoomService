@@ -29,7 +29,7 @@ public class BookingController {
                 for (Room room : building.getRooms()) {
                     if (room.getName().equals(roomName)) {
                         if (isBooked(room, time)) {
-                            return ResponseEntity.status(400).body("{\"error\":\"Room is already booked!\"" + "}");
+                            return ResponseEntity.status(400).body("{\"error\":\"Room is already booked for that timeslot!\"" + "}");
                         } else {
                             Booking booking = new Booking(room, time);
                             bookings.add(booking);
@@ -58,8 +58,12 @@ public class BookingController {
     public ResponseEntity<?> changeBooking(@RequestParam String token, @RequestParam LocalDateTime time) {
         for (Booking booking: bookings) {
             if (booking.getToken().toString().equals(token)) {
-                booking.setTimeStart(time);
-                return ResponseEntity.status(200).body("{\"booking changed to " + time + "\"}");
+                if (isBooked(booking.getRoom(), time)) {
+                    return ResponseEntity.status(400).body("{\"error\":\"Room is already booked for that timeslot!\"" + "}");
+                } else {
+                    booking.setTimeStart(time);
+                    return ResponseEntity.status(200).body("{\"booking changed to " + time + "\"}");
+                }
             }
         }
         return ResponseEntity.status(400).body("{\"error\":\"booking does not exist!\"}");
@@ -79,7 +83,11 @@ public class BookingController {
         boolean booked = false;
         for (Booking booking : bookings) {
             if (booking.getRoom().equals(room)) {
-                if (booking.getTimeStart().equals(time)) {
+                if (time.isAfter(booking.getTimeStart()) && time.isBefore(booking.getTimeEnd())) {
+                    booked = true;
+                } else if (time.plusHours(1).isAfter(booking.getTimeStart()) && time.plusHours(1).isBefore(booking.getTimeEnd())) {
+                    booked = true;
+                } else if (booking.getTimeStart().equals(time)) {
                     booked = true;
                 }
             }
