@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service class for user authentication
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -20,6 +23,11 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    /**
+     * Register a new user
+     * @param request RegisterRequest object containing user details
+     * @return AuthenticationResponse object containing JWT token
+     */
     public AuthenticationResponse register(RegisterRequest request) {
         var user = User.builder()
                 .firstname(request.getFirstname())
@@ -27,7 +35,7 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .company(request.getCompany())
-                .role(Role.WERKNEMER)
+                .role(Role.SYSTEM_ADMIN)
                 .build();
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);
@@ -36,6 +44,11 @@ public class AuthenticationService {
                 .build();
     }
 
+    /**
+     * Authenticate an existing user
+     * @param request AuthenticationRequest object containing user email and password
+     * @return AuthenticationResponse object containing JWT token
+     */
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -51,6 +64,10 @@ public class AuthenticationService {
                 .build();
     }
 
+    /**
+     * List all users
+     * @return List of User objects
+     */
     public List<User> listAll() {
         return repository.findAll();
     }

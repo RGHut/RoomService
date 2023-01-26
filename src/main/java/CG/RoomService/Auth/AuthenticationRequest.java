@@ -5,11 +5,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * AuthenticationRequest class representing the request for user authentication
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthenticationRequest {
+    /**
+     * User's email address
+     */
     private String email;
-    String password;
+    /**
+     * User's password
+     */
+    private String password;
 }

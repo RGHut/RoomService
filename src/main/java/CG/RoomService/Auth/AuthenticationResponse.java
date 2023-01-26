@@ -5,10 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * AuthenticationResponse class representing the response of an authentication request
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthenticationResponse {
-private String token;
+    /**
+     * JWT-token
+     */
+    private String token;
 }
