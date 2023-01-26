@@ -1,13 +1,28 @@
 package CG.RoomService.Models;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Entity
+@Table(name = "bookings")
 public class Booking {
-        private final Room room;
-        private final UUID token;
+        @Id
+        @GeneratedValue(strategy = GenerationType.SEQUENCE)
+        @Column(name = "id", nullable = false)
+        private long id;
+        @Transient
+        @Column(name = "room")
+        private  Room room;
+        private  UUID token;
+        @Column(name = "timeStart")
         private LocalDateTime timeStart;
+        @Column(name = "timeEnd")
         private LocalDateTime timeEnd;
+
+        public Booking() {
+        }
 
         public Booking(Room room, LocalDateTime timeStart, LocalDateTime timeEnd) {
                 this.token = UUID.randomUUID();

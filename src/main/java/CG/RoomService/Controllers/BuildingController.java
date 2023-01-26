@@ -11,8 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 
+/**
+ * This class is a REST controller for building and room management.
+ * It defines several endpoint methods that can be accessed via HTTP requests.
+ */
 @RestController
 public class BuildingController {
+
 
     private static final ArrayList<Building> buildings = new ArrayList<Building>();
 

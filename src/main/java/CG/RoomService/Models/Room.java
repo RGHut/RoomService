@@ -1,13 +1,33 @@
 package CG.RoomService.Models;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
+@Entity
 public class Room {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
+    private Long id;
+    @Column(name = "name")
     private final String name;
+    @Column(name = "floor")
     private final int floor;
+    @Column(name = "maxOccupancy")
     private int maxOccupancy;
+    @Column(name = "isAccessible")
     private boolean isAccessible;
     private boolean pandemicMode = false;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Room(String name, int floor, int maxOccupancy, boolean isAccessible) {
         this.name = name;
