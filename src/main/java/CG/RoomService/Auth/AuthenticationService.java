@@ -25,6 +25,7 @@ public class AuthenticationService {
 
     /**
      * Register a new user
+     *
      * @param request RegisterRequest object containing user details
      * @return AuthenticationResponse object containing JWT token
      */
@@ -46,6 +47,7 @@ public class AuthenticationService {
 
     /**
      * Authenticate an existing user
+     *
      * @param request AuthenticationRequest object containing user email and password
      * @return AuthenticationResponse object containing JWT token
      */
@@ -66,6 +68,7 @@ public class AuthenticationService {
 
     /**
      * List all users
+     *
      * @return List of User objects
      */
     public List<User> listAll() {

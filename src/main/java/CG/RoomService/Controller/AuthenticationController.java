@@ -29,11 +29,12 @@ public class AuthenticationController {
     /**
      * The PostMapping annotation is used to handle HTTP POST requests.
      * This method is used for registration, the request body is mapped to a RegisterRequest object
+     *
      * @param request the request containing the user's registration information
      * @return a ResponseEntity with an AuthenticationResponse object
      */
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register (
+    public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ) {
         return ResponseEntity.ok(service.register(request));
@@ -42,11 +43,12 @@ public class AuthenticationController {
     /**
      * The PostMapping annotation is used to handle HTTP POST requests.
      * This method is used for authentication, the request body is mapped to an AuthenticationRequest object
+     *
      * @param request the request containing the user's authentication information
      * @return a ResponseEntity with an AuthenticationResponse object
      */
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate (
+    public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ) {
         return ResponseEntity.ok(service.authenticate(request));

@@ -11,16 +11,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 /**
  * Security configuration for the application
  *
  * @Configuration annotation indicates that this class provides
  * bean definitions for the application context.
- *
  * @EnableWebSecurity annotation enables Spring Security configuration for web applications
- * @EnableGlobalAuthentication  configure global authentication
- *
- * @RequiredArgsConstructor  Lombok annotation automatically creates a constructor with all final fields as arguments
+ * @EnableGlobalAuthentication configure global authentication
+ * @RequiredArgsConstructor Lombok annotation automatically creates a constructor with all final fields as arguments
  */
 @Configuration
 @EnableWebSecurity

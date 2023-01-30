@@ -24,5 +24,9 @@ public class DemoController {
     public ResponseEntity<String> sayHello() {
         return ResponseEntity.ok("Hello i'm a secured Werk");
     }
-    @PostMapping()
+
+    @PostMapping("/change-role")
+    public ResponseEntity<String> sayChange() {
+        return ResponseEntity.ok("Hello i'm a secured Werk");
+    }
 }

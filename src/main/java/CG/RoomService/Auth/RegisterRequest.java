@@ -31,7 +31,7 @@ public class RegisterRequest {
      */
     private String password;
     /**
-     * User's company 
+     * User's company
      */
     private String company;
 }

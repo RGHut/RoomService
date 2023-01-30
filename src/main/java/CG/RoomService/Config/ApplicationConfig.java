@@ -21,6 +21,7 @@ public class ApplicationConfig {
 
     /**
      * Bean for UserDetailsService.
+     *
      * @return an instance of UserDetailsService, which is used to load user-specific data.
      */
     @Bean
@@ -29,8 +30,10 @@ public class ApplicationConfig {
         return username -> repository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
+
     /**
      * Bean for AuthenticationProvider.
+     *
      * @return an instance of AuthenticationProvider, which is used to authenticate user credentials
      */
     @Bean
@@ -42,15 +45,17 @@ public class ApplicationConfig {
 
     }
 
-/**
- * Bean for AuthenticationManager.
- * @param config the AuthenticationConfiguration to be used
- * @return an instance of AuthenticationManager
- */
+    /**
+     * Bean for AuthenticationManager.
+     *
+     * @param config the AuthenticationConfiguration to be used
+     * @return an instance of AuthenticationManager
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
     //set passwordEncoder:
     @Bean
     public PasswordEncoder passwordEncoder() {
