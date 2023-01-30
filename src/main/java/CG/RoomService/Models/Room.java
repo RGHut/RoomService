@@ -10,7 +10,7 @@ public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private long id;
     @Column(name = "name")
     private final String name;
     @Column(name = "floor")
@@ -21,11 +21,11 @@ public class Room {
     private boolean isAccessible;
     private boolean pandemicMode = false;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

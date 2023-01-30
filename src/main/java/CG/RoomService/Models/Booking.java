@@ -35,6 +35,10 @@ public class Booking {
                 this(room, timeStart, timeStart.plusHours(1));
         }
 
+        public long getId() {
+                return id;
+        }
+
         public Room getRoom() {
                 return room;
         }

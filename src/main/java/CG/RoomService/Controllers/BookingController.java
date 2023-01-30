@@ -4,12 +4,15 @@ import CG.RoomService.Models.Booking;
 import CG.RoomService.Models.Building;
 import CG.RoomService.Models.Room;
 
+import CG.RoomService.Repositories.BookingRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.awt.print.Book;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -24,7 +27,10 @@ import java.util.ArrayList;
  */
 @RestController
 public class BookingController {
-    private final ArrayList<Booking> bookings = new ArrayList<Booking>();
+    @Autowired
+    private BookingRepository bookingRepository;
+
+    private final ArrayList<Booking> bookings = (ArrayList<Booking>) bookingRepository.findAll();
 
     /**
      * Endpoint for getting all bookings
@@ -32,7 +38,8 @@ public class BookingController {
      */
     @GetMapping("/bookings")
     public ArrayList<Booking> getBookings() {
-        return bookings;
+        return (ArrayList<Booking>) bookingRepository.findAll();
+//        return bookings;
     }
 
     /**
@@ -73,6 +80,7 @@ public class BookingController {
         for (Booking booking: bookings) {
             if (booking.getToken().toString().equals(token)) {
                 bookings.remove(booking);
+                bookingRepository.deleteById(booking.getId());
                 return ResponseEntity.status(200).body("{\"booking removed\"}");
             }
         }
