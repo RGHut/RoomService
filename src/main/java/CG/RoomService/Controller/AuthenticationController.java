@@ -6,10 +6,7 @@ import CG.RoomService.Auth.AuthenticationService;
 import CG.RoomService.Auth.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * RestController annotation is used to mark this class as a controller where every method returns a domain object instead of a view.
@@ -35,8 +32,14 @@ public class AuthenticationController {
      */
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody RegisterRequest request
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String company,
+            @RequestParam String email,
+            @RequestParam String password
+
     ) {
+        RegisterRequest request = new RegisterRequest(firstName, lastName, email, password, company);
         return ResponseEntity.ok(service.register(request));
     }
 
@@ -49,8 +52,10 @@ public class AuthenticationController {
      */
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request
+            @RequestParam String email,
+            @RequestParam String password
     ) {
+        AuthenticationRequest request = new AuthenticationRequest(email, password);
         return ResponseEntity.ok(service.authenticate(request));
     }
 
