@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is a REST controller for building and room management.
@@ -22,37 +23,45 @@ import java.util.ArrayList;
 public class BuildingController {
 
     @Autowired
-    private BuildingRepository buildingRepository;
+    private static BuildingRepository buildingRepository;
 
     @Autowired
     private RoomRepository roomRepository;
-    private static final ArrayList<Building> buildings = new ArrayList<Building>();
+    private final ArrayList<Building> buildings = new ArrayList<Building>();
 
     @GetMapping("/buildings")
     public static ArrayList<Building> getBuildings() {
-        return buildings;
+        return (ArrayList<Building>) buildingRepository.findAll();
     }
 
     @PostMapping("/getRooms")
     public ResponseEntity<?> getRooms(@RequestParam String name) {
-        for (Building building: buildings) {
+        if (buildingRepository.existsBuildingByName(name)) {
+            Building building = buildingRepository.findByName(name);
+            return ResponseEntity.status(200).body(building.getRooms());
+        }
+        for (Building building: getBuildings()) {
             if (building.getName().equals(name)) {
                 return ResponseEntity.status(200).body(building.getRooms());
             }
         }
-        return ResponseEntity.status(400).body("{\"error\":" + "\"Building does not exists!\"" + "}");
+        return ResponseEntity.status(400).body("{\"error\":\"Building does not exists!\"}");
     }
 
     @PostMapping("/addBuilding")
     public ResponseEntity<?> addBuilding(@RequestParam String name) {
+        if (buildingRepository.existsBuildingByName(name)) {
+            return ResponseEntity.status(400).body("{\"error\":\"Building already exists!\"}");
+        }
 
-        for (Building building: buildings) {
+        for (Building building: getBuildings()) {
             if (building.getName().equals(name)) {
-                return ResponseEntity.status(400).body("{\"error\":" + "\"Building already exists!\"" + "}");
+                return ResponseEntity.status(400).body("{\"error\":\"Building already exists!\"}");
             }
         }
         Building building = new Building(name);
         buildings.add(building);
+        buildingRepository.save(building);
         return ResponseEntity.status(200).body("{\"created\":\"" + name + "\"}");
     }
 
@@ -67,20 +76,27 @@ public class BuildingController {
             if (building.getName().equals(buildingName)) {
                 for (Room room: building.getRooms()) {
                     if (room.getName().equals(roomName)) {
-                        return ResponseEntity.status(400).body("{\"error\":" + "\"Room already exists!\"" + "}");
+                        return ResponseEntity.status(400).body("{\"error\":\"Room already exists!\"}");
                     }
                 }
-                building.addRoom(roomName, floor, maxOccupancy, accessible);
+                Room room = new Room(roomName, floor, maxOccupancy, accessible);
+                building.addRoom(room);
+                roomRepository.save(room);
+                buildingRepository.save(building);
                 return ResponseEntity.status(200).body("{\"created\":\"" + roomName + "\"}");
             } else {
-                return ResponseEntity.status(400).body("{\"error\":" + "\"Building does not exists!\"" + "}");
+                return ResponseEntity.status(400).body("{\"error\":\"Building does not exists!\"}");
             }
         }
-        return ResponseEntity.status(200).body("{\"error\":" + "\"Unexpected error!\"" + "}");
+        return ResponseEntity.status(200).body("{\"error\":\"Unexpected error!\"}");
     }
 
     @PostMapping("/getRoom")
     public ResponseEntity<?> getRoom(@RequestParam String buildingName, @RequestParam String roomName) {
+        if (buildingRepository.existsBuildingByName(buildingName) && roomRepository.existsRoomByName(roomName)) {
+            return ResponseEntity.status(200).body(roomRepository.findByName(roomName));
+        }
+
         for (Building building : buildings) {
             if (building.getName().equals(roomName)) {
                 for (Room room : building.getRooms()) {
@@ -101,5 +117,12 @@ public class BuildingController {
                 room.switchPandemicMode();
             }
         }
+        List<Room> roomList = roomRepository.findAll();
+        for (Room room: roomList) {
+            room.switchPandemicMode();
+            roomRepository.save(room);
+        }
     }
+
+
 }

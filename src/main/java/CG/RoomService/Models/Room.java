@@ -3,6 +3,8 @@ package CG.RoomService.Models;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Room {
@@ -20,14 +22,11 @@ public class Room {
     @Column(name = "isAccessible")
     private boolean isAccessible;
     private boolean pandemicMode = false;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
+    @OneToMany(mappedBy = "room")
+    private List<Booking> bookings = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "building_id")
+    private Building building;
 
     public Room(String name, int floor, int maxOccupancy, boolean isAccessible) {
         this.name = name;
@@ -52,8 +51,27 @@ public class Room {
         this(1);
     }
 
+    public Building getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(Building building) {
+        this.building = building;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+
     public Booking makeBooking(LocalDateTime start) {
-        return(new Booking(this, start));
+        Booking booking = new Booking(this, start);
+        this.bookings.add(booking);
+        return(booking);
+    }
+
+    public List<Booking> getBookings() {
+        return bookings;
     }
 
     public String getName() {
@@ -80,6 +98,20 @@ public class Room {
             setMaxOccupancy(maxOccupancy / 2);
             pandemicMode = true;
         }
+    }
+
+    public boolean isBooked(LocalDateTime time) {
+        boolean booked = false;
+        for (Booking booking : bookings) {
+            if (time.isAfter(booking.getTimeStart()) && time.isBefore(booking.getTimeEnd())) {
+                booked = true;
+            } else if (time.plusHours(1).isAfter(booking.getTimeStart()) && time.plusHours(1).isBefore(booking.getTimeEnd())) {
+                booked = true;
+            } else if (booking.getTimeStart().equals(time)) {
+                booked = true;
+            }
+        }
+        return booked;
     }
 
     public boolean isAccessible() {

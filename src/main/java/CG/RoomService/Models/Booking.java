@@ -12,11 +12,12 @@ public class Booking {
         @GeneratedValue(strategy = GenerationType.SEQUENCE)
         @Column(name = "id", nullable = false)
         private long id;
-        @Transient
-        @Column(name = "room")
+        @ManyToOne
+        @JoinColumn(name = "room", nullable = false)
         private  Room room;
+        @Column(name = "token", unique = true)
         private  UUID token;
-        @Column(name = "timeStart")
+        @Column(name = "timeStart", nullable = false)
         private LocalDateTime timeStart;
         @Column(name = "timeEnd")
         private LocalDateTime timeEnd;
