@@ -1,8 +1,8 @@
 package CG.RoomService.Controllers;
 
-import CG.RoomService.User.ChangeRoleRequest;
-import CG.RoomService.User.Service.UserService;
-import CG.RoomService.User.User;
+import CG.RoomService.Models.ChangeRoleRequest;
+import CG.RoomService.Service.UserService;
+import CG.RoomService.Models.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
