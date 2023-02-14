@@ -1,5 +1,6 @@
-package CG.RoomService.User;
+package CG.RoomService.Repositories;
 
+import CG.RoomService.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -3,13 +3,10 @@ package CG.RoomService.User.Service;
 
 import CG.RoomService.User.Role;
 import CG.RoomService.User.User;
-import CG.RoomService.User.UserRepository;
+import CG.RoomService.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Optional;
 
 @Service
