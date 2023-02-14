@@ -11,6 +11,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 /**
  * Security configuration for the application
@@ -19,12 +24,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * bean definitions for the application context.
  * @EnableWebSecurity annotation enables Spring Security configuration for web applications
  * @EnableGlobalAuthentication configure global authentication
- * @RequiredArgsConstructor Lombok annotation automatically creates a constructor with all final fields as arguments
+ * @RequiredArgsConstructor Lombok-annotation automatically creates a constructor with all final fields as arguments
  */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalAuthentication
 @RequiredArgsConstructor
+
 public class SecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
     /**
@@ -35,7 +41,16 @@ public class SecurityConfiguration extends GlobalAuthenticationConfigurerAdapter
      * Authentication provider
      */
     private final AuthenticationProvider authenticationProvider;
-
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5500", "http://127.0.0.1:4040"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
     /**
      * Bean definition for security filter chain
      *
@@ -60,14 +75,18 @@ public class SecurityConfiguration extends GlobalAuthenticationConfigurerAdapter
                 .anyRequest()
                 .authenticated()
                 .and()
-                // configure session management
+                 // configure session management
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .cors()
+                .configurationSource(corsConfigurationSource())
                 .and()
                 // set the authentication provider
                 .authenticationProvider(authenticationProvider)
                 // add the JWT authentication filter
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         // return the built filter chain
         return http.build();
 

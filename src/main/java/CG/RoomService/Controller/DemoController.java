@@ -1,15 +1,11 @@
 package CG.RoomService.Controller;
 
-import org.springframework.context.annotation.Configuration;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@Configuration
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 @RestController
-
 @RequestMapping("/demo-controller")
 public class DemoController {
 
@@ -22,7 +18,8 @@ public class DemoController {
 
     @GetMapping("/user")
     public ResponseEntity<String> sayHello() {
-        return ResponseEntity.ok("Hello i'm a secured Werk");
+        System.out.println("Received GET request at /user endpoint");
+        return ResponseEntity.ok("Hello, I'm a secured Work");
     }
 
     @PostMapping("/change-role")

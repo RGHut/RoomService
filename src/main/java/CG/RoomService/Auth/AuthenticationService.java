@@ -5,10 +5,15 @@ import CG.RoomService.User.Role;
 import CG.RoomService.User.User;
 import CG.RoomService.User.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -51,6 +56,33 @@ public class AuthenticationService {
      * @param request AuthenticationRequest object containing user email and password
      * @return AuthenticationResponse object containing JWT token
      */
+//    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+//        authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(
+//                        request.getEmail(),
+//                        request.getPassword()
+//                )
+//        );
+//        var user = repository.findByEmail(request.getEmail())
+//                .orElseThrow();
+//        var jwtToken = jwtService.generateToken(user);
+//        return AuthenticationResponse.builder()
+//                .token(jwtToken)
+//                .build();
+//    }
+
+    /**
+     * List all users
+     *
+     * @return List of User objects
+     */
+    public List<User> listAll() {
+        return repository.findAll();
+    }
+
+    @Autowired
+    private RestTemplate restTemplate;
+
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -61,17 +93,16 @@ public class AuthenticationService {
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
+        AuthenticationResponse response = AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
-    }
 
-    /**
-     * List all users
-     *
-     * @return List of User objects
-     */
-    public List<User> listAll() {
-        return repository.findAll();
+
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//
+//        HttpEntity<AuthenticationResponse> entity = new HttpEntity<>(response, headers);
+//        restTemplate.postForEntity("http://127.0.0.1:5500/", entity, Void.class);
+        return response;
     }
 }

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
  * RequestMapping annotation is used to map web requests onto specific handler classes and/or handler methods.
  * RequiredArgsConstructor annotation is used to create constructor with required fields
  */
+
+@CrossOrigin(origins = "localhost:5500")
 @RestController
 @RequestMapping("/test")
 @RequiredArgsConstructor
@@ -57,6 +59,11 @@ public class AuthenticationController {
     ) {
         AuthenticationRequest request = new AuthenticationRequest(email, password);
         return ResponseEntity.ok(service.authenticate(request));
+    }
+    @GetMapping("/user")
+    public ResponseEntity<String> sayHello() {
+        System.out.println("Received GET request at /user endpoint");
+        return ResponseEntity.ok("Hello i'm a secured Werk");
     }
 
 }
