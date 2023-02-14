@@ -1,8 +1,8 @@
 package CG.RoomService.Auth;
 
 import CG.RoomService.Config.JwtService;
-import CG.RoomService.User.Role;
-import CG.RoomService.User.User;
+import CG.RoomService.Models.Role;
+import CG.RoomService.Models.User;
 import CG.RoomService.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
