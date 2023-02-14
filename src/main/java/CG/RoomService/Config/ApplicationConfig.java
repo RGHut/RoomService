@@ -1,6 +1,6 @@
 package CG.RoomService.Config;
 
-import CG.RoomService.User.UserRepository;
+import CG.RoomService.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
