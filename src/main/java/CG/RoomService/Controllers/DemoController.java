@@ -1,4 +1,4 @@
-package CG.RoomService.Controller;
+package CG.RoomService.Controllers;
 
 
 import org.springframework.http.ResponseEntity;

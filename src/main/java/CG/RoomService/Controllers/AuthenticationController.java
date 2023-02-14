@@ -1,4 +1,4 @@
-package CG.RoomService.Controller;
+package CG.RoomService.Controllers;
 
 import CG.RoomService.Auth.AuthenticationRequest;
 import CG.RoomService.Auth.AuthenticationResponse;

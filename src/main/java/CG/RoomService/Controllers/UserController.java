@@ -1,4 +1,4 @@
-package CG.RoomService.Controller;
+package CG.RoomService.Controllers;
 
 import CG.RoomService.User.ChangeRoleRequest;
 import CG.RoomService.User.Service.UserService;
