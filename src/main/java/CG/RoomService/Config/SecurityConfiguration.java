@@ -70,7 +70,8 @@ public class SecurityConfiguration extends GlobalAuthenticationConfigurerAdapter
                 .requestMatchers("/test/**", "/h2/**")
                 .permitAll()
                 // permit requests to /demo-controller/admin/** for users with ADMIN authority
-                .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                .requestMatchers("/admin/**").hasAnyAuthority("ADMIN","SYSTEM_ADMIN")
+                .requestMatchers("/demo-controller/admin/**").hasAnyAuthority("ADMIN","SYSTEM_ADMIN")
                 // authenticate all other requests
                 .anyRequest()
                 .authenticated()
