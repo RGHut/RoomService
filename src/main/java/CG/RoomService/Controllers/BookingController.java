@@ -4,6 +4,7 @@ import CG.RoomService.Models.Booking;
 import CG.RoomService.Models.Building;
 import CG.RoomService.Models.Room;
 
+import CG.RoomService.Models.User;
 import CG.RoomService.Repositories.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,7 @@ public class BookingController {
      * @return - HTTP response with a success or error message
      */
     @PostMapping("/makeBooking")
-    public ResponseEntity<?> makeBooking(@RequestParam String buildingName, @RequestParam String roomName, @RequestParam LocalDateTime time) {
+    public ResponseEntity<?> makeBooking(@RequestParam String buildingName, @RequestParam String roomName, @RequestParam LocalDateTime time, @RequestParam User user) {
 
         for (Building building: BuildingController.getBuildings()) {
             if (building.getName().equals(buildingName)) {
@@ -60,7 +61,7 @@ public class BookingController {
                         if (room.isBooked(time)) {
                             return ResponseEntity.status(400).body("{\"error\":\"Room is already booked for that timeslot!\"}");
                         } else {
-                            Booking booking = new Booking(room, time);
+                            Booking booking = user.makeBooking(room, time);
                             bookings.get().add(booking);
                             bookingRepository.save(booking);
                             return ResponseEntity.status(200).body("{\"Booking created\" " + booking.getToken() + "}");
@@ -83,11 +84,13 @@ public class BookingController {
         if (bookingRepository.existsBookingByToken(UUID.fromString(token))) {
             Booking booking = bookingRepository.findByToken(UUID.fromString(token));
             bookingRepository.deleteById(booking.getId());
+            booking.getUser().cancelBooking(booking);
             return ResponseEntity.status(200).body("{\"booking removed\"}");
         }
         for (Booking booking: bookings.get()) {
             if (booking.getToken().toString().equals(token)) {
                 bookings.get().remove(booking);
+                booking.getUser().cancelBooking(booking);
                 return ResponseEntity.status(200).body("{\"booking removed\"}");
             }
         }
