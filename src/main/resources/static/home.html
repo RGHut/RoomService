@@ -1,32 +1,41 @@
 <h1>Logged in</h1>
-<html>
 
-<head>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        if (localStorage.getItem("jwtToken")) {
-            const token = localStorage.getItem("jwtToken")
-            localStorage.clear()
+<button id="logoutButton" onclick="logout()">Logout</button>
 
-            $.ajax({
-                // url: "https://9f56-213-34-133-170.eu.ngrok.io/demo-controller/user",
-                url: "http://localhost:8080/demo-controller/admin",
-                type: "GET",
-                dataType: 'text',
+<script>
+    function logout() {
+        localStorage.removeItem("jwtToken");
+        window.location.href = "/index.html";
+    }
 
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-                },
-                success: function (data) {
-                    console.log('Response data:', data);
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.error('Error:', textStatus, errorThrown);
-                }
-            });
+    // Your existing code for making API requests can go here
+</script>
 
-        } else {
-            window.location.href = "/index.html";
-        }
-    </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    if (localStorage.getItem("jwtToken")) {
+        const token = localStorage.getItem("jwtToken")
+        // localStorage.clear()
+
+        $.ajax({
+            // url: "https://9f56-213-34-133-170.eu.ngrok.io/demo-controller/user",
+            url: "http://localhost:8080/demo-controller/admin",
+            type: "GET",
+            dataType: 'text',
+
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+            },
+            success: function (data) {
+                console.log('Response data:', data);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error('Error:', textStatus, errorThrown);
+            }
+        });
+
+    } else {
+        window.location.href = "/index.html";
+    }
+</script>
 </head>
