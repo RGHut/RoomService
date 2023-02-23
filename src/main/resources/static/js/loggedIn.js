@@ -1,6 +1,6 @@
 function logout() {
     localStorage.removeItem("jwtToken");
-    window.location.href = "/index.html";
+    window.location.href = "/src/main/resources/static/index.html";
 }
 
 if (localStorage.getItem("jwtToken")) {
@@ -24,5 +24,5 @@ if (localStorage.getItem("jwtToken")) {
 
     $('#logoutButton').click(logout);
 } else {
-    window.location.href = "/index.html";
+    window.location.href = "/src/main/resources/static/index.html";
 }

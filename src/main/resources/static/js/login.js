@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $("#submit-form").submit(function (e) {
+    $("#email-form").submit(function (e) {
         e.preventDefault();
 
         var email = $("#email").val();
@@ -18,7 +18,7 @@ $(document).ready(function () {
 
                 // Store the token in local storage
                 localStorage.setItem("jwtToken", token);
-                window.location.href = "/home.html";
+                window.location.href = "/src/main/resources/static/home.html";
             },
             error: function (xhr, status, error) {
                 console.log("Error: " + error);
