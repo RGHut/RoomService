@@ -17,6 +17,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
+
 /**
  * Security configuration for the application
  *
@@ -64,10 +66,12 @@ public class SecurityConfiguration extends GlobalAuthenticationConfigurerAdapter
                 // disable csrf protection
                 .csrf()
                 .disable()
-                // configure authorization for requests
+                .headers().frameOptions().disable()
+                .and()
                 .authorizeHttpRequests()
-                // permit all requests to /test/** and /h2/**
-                .requestMatchers("/test/**", "/h2/**")
+                .requestMatchers(toH2Console())
+                .permitAll()
+                .requestMatchers("/test/**")
                 .permitAll()
                 // permit requests to /demo-controller/admin/** for users with ADMIN authority
                 .requestMatchers("/admin/**").hasAnyAuthority("ADMIN","SYSTEM_ADMIN")
