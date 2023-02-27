@@ -17,9 +17,9 @@ public class BookingService {
 
     private final BookingRepository bookingRepository;
 
-    private final RoomRepository roomRepository;
-
-    private final UserRepository userRepository;
+//    private final RoomRepository roomRepository;
+//
+//    private final UserRepository userRepository;
 
 
     public List<Booking> getBookings() {

@@ -14,21 +14,21 @@ public class Booking {
         private long id;
         @ManyToOne
         @JoinColumn(name = "room_name", nullable = false)
-        private  String room;
+        private Room room;
         @Column(name = "token", unique = true)
-        private  UUID token;
+        private UUID token;
         @Column(name = "timeStart", nullable = false)
         private LocalDateTime timeStart;
         @Column(name = "timeEnd")
         private LocalDateTime timeEnd;
         @ManyToOne
         @JoinColumn(name = "user_email")
-        private String user;
+        private User user;
 
         public Booking() {
         }
 
-        public Booking(String room, LocalDateTime timeStart, LocalDateTime timeEnd, String user) {
+        public Booking(Room room, LocalDateTime timeStart, LocalDateTime timeEnd, User user) {
                 this.token = UUID.randomUUID();
                 this.room = room;
                 this.timeStart = timeStart;
@@ -36,7 +36,7 @@ public class Booking {
                 this.user = user;
         }
 
-        public Booking(String room, LocalDateTime timeStart, String user) {
+        public Booking(Room room, LocalDateTime timeStart, User user) {
                 this(room, timeStart, timeStart.plusHours(1), user);
         }
 
@@ -44,7 +44,7 @@ public class Booking {
                 return id;
         }
 
-        public String getRoom() {
+        public Room getRoom() {
                 return room;
         }
 
@@ -69,7 +69,7 @@ public class Booking {
                 return token;
         }
 
-        public String getUser() {
+        public User getUser() {
                 return this.user;
         }
 }

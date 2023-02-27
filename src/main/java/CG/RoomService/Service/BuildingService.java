@@ -41,7 +41,7 @@ public class BuildingService {
         }
     }
     public void addRoom(Room room) {
-        Building building = buildingRepository.findByName(room.getBuilding());
+        Building building = buildingRepository.findByName(room.getBuilding().getName());
         building.addRoom(room);
         roomRepository.save(room);
         buildingRepository.save(building);
