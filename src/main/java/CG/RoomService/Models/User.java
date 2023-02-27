@@ -10,6 +10,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,6 +34,8 @@ public class User implements UserDetails {
     private String company;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @OneToMany(mappedBy = "user")
+    private List<Booking> bookings = new ArrayList<>();
 
 
 
@@ -43,6 +47,10 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    public List<Booking> getBookings() {
+        return bookings;
     }
 
     @Override
@@ -68,5 +76,16 @@ public class User implements UserDetails {
     public void setAuthorities(Role role) {
 
         this.role = role;
+    }
+
+    public Booking makeBooking(Room room, LocalDateTime timeStart) {
+        Booking booking = room.makeBooking(timeStart, this);
+        this.bookings.add(booking);
+        return booking;
+    }
+
+    public void cancelBooking(Booking booking) {
+        booking.getRoom().cancelBooking(booking);
+        this.bookings.remove(booking);
     }
 }
