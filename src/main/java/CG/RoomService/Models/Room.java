@@ -25,8 +25,8 @@ public class Room {
     @OneToMany(mappedBy = "room")
     private List<Booking> bookings = new ArrayList<>();
     @ManyToOne
-    @JoinColumn(name = "building_id")
-    private Building building;
+    @JoinColumn(name = "building_name")
+    private String building;
 
     public Room(String name, int floor, int maxOccupancy, boolean isAccessible) {
         this.name = name;
@@ -51,11 +51,11 @@ public class Room {
         this(1);
     }
 
-    public Building getBuilding() {
+    public String getBuilding() {
         return building;
     }
 
-    public void setBuilding(Building building) {
+    public void setBuilding(String building) {
         this.building = building;
     }
 
@@ -64,11 +64,11 @@ public class Room {
     }
 
 
-    public Booking makeBooking(LocalDateTime start, User user) {
-        Booking booking = new Booking(this, start, user);
-        this.bookings.add(booking);
-        return(booking);
-    }
+//    public Booking makeBooking(LocalDateTime start, User user) {
+//        Booking booking = new Booking(this, start, user);
+//        this.bookings.add(booking);
+//        return(booking);
+//    }
 
     public void cancelBooking(Booking booking) {
         bookings.remove(booking);

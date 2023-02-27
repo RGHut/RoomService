@@ -78,14 +78,4 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    public Booking makeBooking(Room room, LocalDateTime timeStart) {
-        Booking booking = room.makeBooking(timeStart, this);
-        this.bookings.add(booking);
-        return booking;
-    }
-
-    public void cancelBooking(Booking booking) {
-        booking.getRoom().cancelBooking(booking);
-        this.bookings.remove(booking);
-    }
 }
