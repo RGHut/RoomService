@@ -72,7 +72,7 @@
 ////            }
 ////        }
 ////        return ResponseEntity.status(400).body("{\"error\":\"Building does not exists!\"}");
-//    }
+////    }
 //
 //    /**
 //     * Cancels a booking with the given token
