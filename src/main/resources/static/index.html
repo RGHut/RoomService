@@ -3,40 +3,6 @@
 <html data-wf-page="63eb9acfbb5d8349b9c43d52" data-wf-site="63eb9acfbb5d83b1bbc43d51">
 
 <head>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-  <script>
-    $(document).ready(function () {
-      $("#email-form").submit(function (e) {
-        e.preventDefault();
-
-        var email = $("#email").val();
-        var password = $("#password").val();
-        // console.log(email, password)
-
-        $.ajax({
-          // url: "https://c67b-2001-1c01-43c5-e600-fd5-afa8-1079-72a/test/authenticate",
-          url: "http://localhost:8080/test/authenticate",
-          type: "POST",
-          data: {
-            email: email,
-            password: password
-          },
-          success: function (data) {
-            var token = data.token;
-            console.log("Received token: " + token);
-
-            // Store the token in local storage
-            localStorage.setItem("jwtToken", token);
-            window.location.href = "/home.html";
-          },
-          error: function (xhr, status, error) {
-            console.log("Error: " + error);
-          }
-        });
-      });
-    });
-  </script>
   <meta charset="utf-8">
   <title>RoomserviceApp</title>
   <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -83,8 +49,10 @@
               maxlength="256" name="name" data-name="Name" placeholder="" id="email"><input type="password"
               class="textfield password w-input" maxlength="256" name="email" data-name="Email" placeholder=""
               id="password" required=""><input type="submit" value="Login" data-wait="Please wait..."
-              class="button login w-button"><input type="submit" value="register" data-wait="Please wait..."
-              class="button register w-button"></form>
+              class="button login w-button">
+            <!-- <input type="submit" value="register" data-wait="Please wait..."
+              class="button register w-button"> -->
+          </form>
 
         </div>
       </div>
@@ -96,6 +64,13 @@
   </script>
   <script src="js/webflow.js" type="text/javascript"></script>
   <!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
+
+
+
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="js/login.js"></script>
+  <script src="js/webflow.js" type="text/javascript"></script>
 </body>
 
 </html>
