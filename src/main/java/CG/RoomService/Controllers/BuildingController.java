@@ -48,7 +48,7 @@ public class BuildingController {
 
     @PostMapping("/addRoom")
     public ResponseEntity<?> addRoom(@RequestBody Room room) {
-        if (buildingService.isBuildingExist(room.getBuilding().getName())) {
+        if (buildingService.isBuildingExist(room.getBuilding())) {
             if (buildingService.isRoomExist(room.getName())) {
                 return ResponseEntity.status(400).body("{\"error\":\"Room already exists!\"}");
             }
