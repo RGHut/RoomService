@@ -1,41 +1,24 @@
-<h1>Logged in</h1>
+<!DOCTYPE html>
+<html lang='en'>
 
-<button id="logoutButton" onclick="logout()">Logout</button>
+<head>
+    <meta charset='utf-8' />
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.4/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.4/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.4/index.global.min.js'></script>
+    <script src="js/calendar.js"></script>
 
-<script>
-    function logout() {
-        localStorage.removeItem("jwtToken");
-        window.location.href = "/index.html";
-    }
-
-    // Your existing code for making API requests can go here
-</script>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    if (localStorage.getItem("jwtToken")) {
-        const token = localStorage.getItem("jwtToken")
-        // localStorage.clear()
-
-        $.ajax({
-            // url: "https://9f56-213-34-133-170.eu.ngrok.io/demo-controller/user",
-            url: "http://localhost:8080/demo-controller/admin",
-            type: "GET",
-            dataType: 'text',
-
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-            },
-            success: function (data) {
-                console.log('Response data:', data);
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.error('Error:', textStatus, errorThrown);
-            }
-        });
-
-    } else {
-        window.location.href = "/index.html";
-    }
-</script>
+    <h1>Calendar</h1>
 </head>
+
+<body>
+    <div id="calendar"></div>
+
+    <button id="logoutButton">Logout</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/loggedIn.js"></script>
+
+</body>
+
+</html>
