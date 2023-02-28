@@ -22,7 +22,7 @@ public class BookingService {
 
     private final RoomRepository roomRepository;
 
-//    private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
 
     public List<Booking> getBookings() {
@@ -38,8 +38,10 @@ public class BookingService {
         if (room.isBooked(booking.getTimeStart())) {
             return false;
         }
+        booking.getUser().makeBooking(booking);
         room.makeBooking(booking);
         roomRepository.save(room);
+        userRepository.save((booking.getUser()));
         bookingRepository.save(booking);
         return true;
     }

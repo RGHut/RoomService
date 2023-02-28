@@ -76,6 +76,8 @@ document.addEventListener('DOMContentLoaded', function () {
       reserveBtn.addEventListener('click', function() {
         // Do something when the button is clicked
         console.log('Reserve button clicked');
+        console.log(info.start);
+        console.log(info.end);
         modalInstance.hide();
         modal.remove();
       });

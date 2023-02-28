@@ -77,5 +77,7 @@ public class User implements UserDetails {
 
         this.role = role;
     }
-
+    public void makeBooking(Booking booking) {
+        this.bookings.add(booking);
+    }
 }
