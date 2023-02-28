@@ -64,11 +64,9 @@ public class Room {
     }
 
 
-//    public Booking makeBooking(LocalDateTime start, User user) {
-//        Booking booking = new Booking(this, start, user);
-//        this.bookings.add(booking);
-//        return(booking);
-//    }
+    public void makeBooking(Booking booking) {
+        this.bookings.add(booking);
+    }
 
     public void cancelBooking(Booking booking) {
         bookings.remove(booking);

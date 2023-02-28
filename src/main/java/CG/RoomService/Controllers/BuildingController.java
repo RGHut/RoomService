@@ -3,16 +3,14 @@ package CG.RoomService.Controllers;
 import CG.RoomService.Models.Building;
 import CG.RoomService.Models.Room;
 
-import CG.RoomService.Repositories.BuildingRepository;
-import CG.RoomService.Repositories.RoomRepository;
 import CG.RoomService.Service.BuildingService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  * This class is a REST controller for building and room management.
@@ -57,7 +55,6 @@ public class BuildingController {
         } else {
             return ResponseEntity.status(400).body("{\"error\":\"Building does not exists!\"}");
         }
-//        return ResponseEntity.status(200).body("{\"error\":\"Unexpected error!\"}");
     }
 
     @DeleteMapping("deleteRoom")
