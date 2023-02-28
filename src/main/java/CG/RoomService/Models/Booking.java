@@ -12,8 +12,9 @@ public class Booking {
         @GeneratedValue(strategy = GenerationType.SEQUENCE)
         @Column(name = "id", nullable = false)
         private long id;
-        @ManyToOne
-        @JoinColumn(name = "room_name", nullable = false)
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "room_id", referencedColumnName = "id", nullable = false)
+        @JoinColumn(name = "room_name", referencedColumnName = "name", nullable = false)
         private Room room;
         @Column(name = "token", unique = true)
         private UUID token;
@@ -21,8 +22,9 @@ public class Booking {
         private LocalDateTime timeStart;
         @Column(name = "timeEnd")
         private LocalDateTime timeEnd;
-        @ManyToOne
-        @JoinColumn(name = "user_email")
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "user_id", referencedColumnName = "id")
+        @JoinColumn(name = "user_email", referencedColumnName = "email")
         private User user;
 
         public Booking() {

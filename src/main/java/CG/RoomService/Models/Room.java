@@ -24,8 +24,9 @@ public class Room {
     private boolean pandemicMode = false;
     @OneToMany(mappedBy = "room")
     private List<Booking> bookings = new ArrayList<>();
-    @ManyToOne
-    @JoinColumn(name = "building_name")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "building_id", referencedColumnName="id")
+    @JoinColumn(name = "building_name", referencedColumnName = "name")
     private Building building;
 
     public Room(String name, int floor, int maxOccupancy, boolean isAccessible) {
