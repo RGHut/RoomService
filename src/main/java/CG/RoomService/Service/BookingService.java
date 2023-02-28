@@ -6,6 +6,7 @@ import CG.RoomService.Models.User;
 import CG.RoomService.Repositories.BookingRepository;
 import CG.RoomService.Repositories.RoomRepository;
 import CG.RoomService.Repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ public class BookingService {
     public Booking getBooking(String token) {
         return bookingRepository.findByToken(UUID.fromString(token));
     }
-
+    @Transactional
     public boolean makeBooking(Booking booking) {
         Room room = roomRepository.findByName(booking.getRoom().getName());
         Optional<User> optionalUser = userRepository.findByEmail(booking.getUser().getEmail());
@@ -45,9 +46,9 @@ public class BookingService {
         }
         User user = optionalUser.get();
         user.makeBooking(booking);
+        userRepository.save(user);
         room.makeBooking(booking);
         roomRepository.save(room);
-        userRepository.save(user);
         bookingRepository.save(booking);
         return true;
     }

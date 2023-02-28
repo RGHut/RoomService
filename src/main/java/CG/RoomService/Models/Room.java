@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "room", uniqueConstraints = {@UniqueConstraint(columnNames = {"building_name", "name"})})
 public class Room {
 
     @Id
@@ -25,8 +26,8 @@ public class Room {
     @OneToMany(mappedBy = "room")
     private List<Booking> bookings = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "building_id", referencedColumnName="id")
-    @JoinColumn(name = "building_name", referencedColumnName = "name")
+    @JoinColumn(name = "building_id", referencedColumnName="id", nullable = false)
+    @JoinColumn(name = "building_name", referencedColumnName = "name", nullable = false)
     private Building building;
 
     public Room(String name, int floor, int maxOccupancy, boolean isAccessible) {
