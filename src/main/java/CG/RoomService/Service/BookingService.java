@@ -35,7 +35,7 @@ public class BookingService {
     }
 
     public boolean makeBooking(Booking booking) {
-        Room room = booking.getRoom();
+        Room room = roomRepository.findByName(booking.getRoom().getName());
         Optional<User> optionalUser = userRepository.findByEmail(booking.getUser().getEmail());
         if (optionalUser.isEmpty()) {
             return false;
