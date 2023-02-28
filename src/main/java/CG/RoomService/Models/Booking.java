@@ -23,8 +23,8 @@ public class Booking {
         @Column(name = "timeEnd")
         private LocalDateTime timeEnd;
         @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "user_id", referencedColumnName = "id")
-        @JoinColumn(name = "user_email", referencedColumnName = "email")
+        @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+        @JoinColumn(name = "user_email", referencedColumnName = "email", nullable = false)
         private User user;
 
         public Booking() {
