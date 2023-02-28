@@ -2,6 +2,7 @@ package CG.RoomService.Service;
 
 import CG.RoomService.Models.Booking;
 import CG.RoomService.Models.Room;
+import CG.RoomService.Models.User;
 import CG.RoomService.Repositories.BookingRepository;
 import CG.RoomService.Repositories.RoomRepository;
 import CG.RoomService.Repositories.UserRepository;
@@ -35,10 +36,15 @@ public class BookingService {
 
     public boolean makeBooking(Booking booking) {
         Room room = booking.getRoom();
+        Optional<User> optionalUser = userRepository.findByEmail(booking.getUser().getEmail());
+        if (optionalUser.isEmpty()) {
+            return false;
+        }
         if (room.isBooked(booking.getTimeStart())) {
             return false;
         }
-        booking.getUser().makeBooking(booking);
+        User user = optionalUser.get();
+        user.makeBooking(booking);
         room.makeBooking(booking);
         roomRepository.save(room);
         userRepository.save((booking.getUser()));
