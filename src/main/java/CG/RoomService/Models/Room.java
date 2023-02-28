@@ -67,6 +67,7 @@ public class Room {
 
     public void makeBooking(Booking booking) {
         this.bookings.add(booking);
+        booking.setRoom(this);
     }
 
     public void cancelBooking(Booking booking) {

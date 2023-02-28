@@ -79,5 +79,6 @@ public class User implements UserDetails {
     }
     public void makeBooking(Booking booking) {
         this.bookings.add(booking);
+        booking.setUser(this);
     }
 }
