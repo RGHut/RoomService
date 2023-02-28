@@ -47,7 +47,7 @@ public class BookingService {
         user.makeBooking(booking);
         room.makeBooking(booking);
         roomRepository.save(room);
-        userRepository.save((booking.getUser()));
+        userRepository.save(user);
         bookingRepository.save(booking);
         return true;
     }
