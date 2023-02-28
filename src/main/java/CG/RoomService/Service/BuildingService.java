@@ -47,6 +47,27 @@ public class BuildingService {
         buildingRepository.save(building);
     }
 
+    public boolean deleteBuilding(String name) {
+        if(isBuildingExist(name)) {
+            Building building = buildingRepository.findByName(name);
+            for (Room room: building.getRooms()) {
+                deleteRoom(room.getName());
+            }
+            buildingRepository.delete(building);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deleteRoom(String name) {
+        if(isRoomExist(name)) {
+            Room room = roomRepository.findByName(name);
+            roomRepository.delete(room);
+            return true;
+        }
+        return false;
+    }
+
     public boolean isBuildingExist(String name) {
         return buildingRepository.existsBuildingByName(name);
     }

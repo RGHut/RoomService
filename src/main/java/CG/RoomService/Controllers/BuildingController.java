@@ -60,6 +60,22 @@ public class BuildingController {
 //        return ResponseEntity.status(200).body("{\"error\":\"Unexpected error!\"}");
     }
 
+    @DeleteMapping("deleteRoom")
+    public ResponseEntity<?> deleteRoom(@RequestParam String roomName) {
+        if (buildingService.deleteRoom(roomName)) {
+            return ResponseEntity.status(200).body("{\"Deleted\":\"" + roomName + "\"}");
+        }
+        return ResponseEntity.status(400).body("{\"error\":\"room does not exist\"}");
+    }
+
+    @DeleteMapping("deleteBuilding")
+    public ResponseEntity<?> deleteBuilding(@RequestParam String buildingName) {
+        if (buildingService.deleteBuilding(buildingName)) {
+            return ResponseEntity.status(200).body("{\"Deleted\":\"" + buildingName + " and all its rooms\"}");
+        }
+        return ResponseEntity.status(400).body("{\"error\":\"building does not exist\"}");
+    }
+
     @PostMapping("/getRoom")
     public ResponseEntity<?> getRoom(@RequestParam String buildingName, @RequestParam String roomName) {
         if (buildingService.isBuildingExist(buildingName)) {
