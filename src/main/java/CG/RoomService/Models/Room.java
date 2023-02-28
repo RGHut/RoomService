@@ -26,7 +26,7 @@ public class Room {
     private List<Booking> bookings = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "building_name")
-    private String building;
+    private Building building;
 
     public Room(String name, int floor, int maxOccupancy, boolean isAccessible) {
         this.name = name;
@@ -51,11 +51,11 @@ public class Room {
         this(1);
     }
 
-    public String getBuilding() {
+    public Building getBuilding() {
         return building;
     }
 
-    public void setBuilding(String building) {
+    public void setBuilding(Building building) {
         this.building = building;
     }
 

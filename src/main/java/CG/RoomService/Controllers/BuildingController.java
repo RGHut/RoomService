@@ -48,7 +48,7 @@ public class BuildingController {
 
     @PostMapping("/addRoom")
     public ResponseEntity<?> addRoom(@RequestBody Room room) {
-        if (buildingService.isBuildingExist(room.getBuilding())) {
+        if (buildingService.isBuildingExist(room.getBuilding().getName())) {
             if (buildingService.isRoomExist(room.getName())) {
                 return ResponseEntity.status(400).body("{\"error\":\"Room already exists!\"}");
             }
@@ -58,6 +58,22 @@ public class BuildingController {
             return ResponseEntity.status(400).body("{\"error\":\"Building does not exists!\"}");
         }
 //        return ResponseEntity.status(200).body("{\"error\":\"Unexpected error!\"}");
+    }
+
+    @DeleteMapping("deleteRoom")
+    public ResponseEntity<?> deleteRoom(@RequestParam String roomName) {
+        if (buildingService.deleteRoom(roomName)) {
+            return ResponseEntity.status(200).body("{\"Deleted\":\"" + roomName + "\"}");
+        }
+        return ResponseEntity.status(400).body("{\"error\":\"room does not exist\"}");
+    }
+
+    @DeleteMapping("deleteBuilding")
+    public ResponseEntity<?> deleteBuilding(@RequestParam String buildingName) {
+        if (buildingService.deleteBuilding(buildingName)) {
+            return ResponseEntity.status(200).body("{\"Deleted\":\"" + buildingName + " and all its rooms\"}");
+        }
+        return ResponseEntity.status(400).body("{\"error\":\"building does not exist\"}");
     }
 
     @PostMapping("/getRoom")

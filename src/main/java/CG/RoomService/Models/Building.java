@@ -54,12 +54,12 @@ public class Building {
 
     public void addRoom(String name, int floor, int maxOccupancy, boolean accessible) {
         Room room = new Room(name, floor, maxOccupancy, accessible);
-        room.setBuilding(this.name);
+        room.setBuilding(this);
         this.rooms.add(room);
     }
 
     public void addRoom(Room room) {
-        room.setBuilding(this.name);
+        room.setBuilding(this);
         this.rooms.add(room);
     }
 
