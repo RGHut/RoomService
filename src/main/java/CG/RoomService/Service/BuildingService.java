@@ -40,6 +40,7 @@ public class BuildingService {
             return false;
         }
     }
+
     public void addRoom(Room room) {
         Building building = buildingRepository.findByName(room.getBuilding().getName());
         building.addRoom(room);
