@@ -32,7 +32,7 @@ public class BookingController {
     /**
      * Endpoint for getting all bookings
      *
-     * @return ArrayList<Booking> list of all bookings
+     * @return List<Booking> list of all bookings
      */
     @GetMapping("/bookings")
     public List<Booking> getBookings() {
@@ -41,7 +41,7 @@ public class BookingController {
     }
     /**
      * Creates a new booking with the given building name, room name and time
-     *
+     * @param booking - booking object to be saved in the database
      * @return - HTTP response with a success or error message
      */
     @PostMapping("/makeBooking")
@@ -97,6 +97,15 @@ public class BookingController {
             return ResponseEntity.status(200).body(bookingService.getBooking(token));
         }
         return ResponseEntity.status(400).body("{\"error\":\"booking does not exist\"}");
+    }
+
+    @DeleteMapping("/cleanBookings")
+    public ResponseEntity<?> cleanBookings() {
+        if (bookingService.bookingCleanup()) {
+            return ResponseEntity.status(200).body("{\"Booking cleanup successful\"}");
+        }
+
+        return ResponseEntity.status(400).body("{\"error\":\"something went wrong during cleanup\"}");
     }
 
 }

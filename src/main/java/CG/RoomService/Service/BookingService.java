@@ -46,10 +46,10 @@ public class BookingService {
         }
         User user = optionalUser.get();
         user.makeBooking(booking);
-        userRepository.save(user);
         room.makeBooking(booking);
-        roomRepository.save(room);
         bookingRepository.save(booking);
+        userRepository.save(user);
+        roomRepository.save(room);
         return true;
     }
 
@@ -59,7 +59,10 @@ public class BookingService {
             bookingRepository.deleteById(booking.getId());
             Room room = booking.getRoom();
             room.cancelBooking(booking);
+            User user = booking.getUser();
+            user.cancelBooking(booking);
             roomRepository.save(room);
+            userRepository.save(user);
             return true;
         }
         return false;
@@ -78,6 +81,19 @@ public class BookingService {
 
     public boolean isBookingExist(String token) {
         return bookingRepository.existsBookingByToken(UUID.fromString(token));
+    }
+
+    public boolean bookingCleanup() {
+        LocalDateTime current = LocalDateTime.now();
+        List<Booking> bookingList = getBookings();
+        for (Booking booking: bookingList) {
+            if (booking.getTimeEnd().isBefore(current)) {
+                if (!cancelBooking(booking.getToken().toString())) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 

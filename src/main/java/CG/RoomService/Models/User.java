@@ -81,4 +81,8 @@ public class User implements UserDetails {
         this.bookings.add(booking);
         booking.setUser(this);
     }
+
+    public void cancelBooking(Booking booking) {
+        bookings.remove(booking);
+    }
 }
