@@ -17,7 +17,7 @@ public class Booking {
         @JoinColumn(name = "room_name", referencedColumnName = "name", nullable = false)
         private Room room;
         @Column(name = "token", unique = true)
-        private UUID token;
+        private String token;
         @Column(name = "timeStart", nullable = false)
         private LocalDateTime timeStart;
         @Column(name = "timeEnd")
@@ -31,7 +31,7 @@ public class Booking {
         }
 
         public Booking(Room room, LocalDateTime timeStart, LocalDateTime timeEnd, User user) {
-                this.token = UUID.randomUUID();
+                this.token = UUID.randomUUID().toString();
                 this.room = room;
                 this.timeStart = timeStart;
                 this.timeEnd = timeEnd;
@@ -67,8 +67,12 @@ public class Booking {
                 return timeEnd;
         }
 
-        public UUID getToken() {
+        public String getToken() {
                 return token;
+        }
+
+        public void generateToken() {
+                this.token = UUID.randomUUID().toString();
         }
 
         public User getUser() {

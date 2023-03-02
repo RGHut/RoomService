@@ -32,7 +32,7 @@ public class BookingService {
     }
 
     public Booking getBooking(String token) {
-        return bookingRepository.findByToken(UUID.fromString(token));
+        return bookingRepository.findByToken(token);
     }
     @Transactional
     public boolean makeBooking(Booking booking) {
@@ -54,8 +54,8 @@ public class BookingService {
     }
 
     public boolean cancelBooking(String token) {
-        if (bookingRepository.existsBookingByToken(UUID.fromString(token))) {
-            Booking booking = bookingRepository.findByToken(UUID.fromString(token));
+        if (bookingRepository.existsBookingByToken(token)) {
+            Booking booking = bookingRepository.findByToken(token);
             bookingRepository.deleteById(booking.getId());
             Room room = booking.getRoom();
             room.cancelBooking(booking);
@@ -69,7 +69,7 @@ public class BookingService {
     }
 
     public boolean changeBooking(String token, LocalDateTime time) {
-        Booking booking = bookingRepository.findByToken(UUID.fromString(token));
+        Booking booking = bookingRepository.findByToken(token);
         if (booking.getRoom().isBooked(time)){
             return false;
         }
@@ -80,7 +80,7 @@ public class BookingService {
     }
 
     public boolean isBookingExist(String token) {
-        return bookingRepository.existsBookingByToken(UUID.fromString(token));
+        return bookingRepository.existsBookingByToken(token);
     }
 
     public boolean bookingCleanup() {
@@ -88,7 +88,7 @@ public class BookingService {
         List<Booking> bookingList = getBookings();
         for (Booking booking: bookingList) {
             if (booking.getTimeEnd().isBefore(current)) {
-                if (!cancelBooking(booking.getToken().toString())) {
+                if (!cancelBooking(booking.getToken())) {
                     return false;
                 }
             }
