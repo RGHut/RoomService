@@ -9,8 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.time.LocalDateTime;
-
+import java.time.OffsetDateTime;
 import java.util.List;
 
 
@@ -35,8 +34,8 @@ public class BookingController {
      * @return List<Booking> list of all bookings
      */
     @GetMapping("/bookings")
-    public List<Booking> getBookings() {
-        return bookingService.getBookings();
+    public ResponseEntity<List<Booking>> getBookings() {
+        return ResponseEntity.status(200).body(bookingService.getBookings());
 //        return bookings;
     }
     /**
@@ -74,7 +73,7 @@ public class BookingController {
      * @return A response indicating whether the booking was changed successfully or not
      */
     @PostMapping("/changeBooking")
-    public ResponseEntity<?> changeBooking(@RequestParam String token, @RequestParam LocalDateTime time) {
+    public ResponseEntity<?> changeBooking(@RequestParam String token, @RequestParam OffsetDateTime time) {
         if (bookingService.isBookingExist(token)) {
             if (bookingService.changeBooking(token, time)) {
                 return ResponseEntity.status(200).body("{\"booking changed to " + time + "\"}");

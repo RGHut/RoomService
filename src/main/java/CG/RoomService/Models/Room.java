@@ -1,8 +1,9 @@
 package CG.RoomService.Models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class Room {
     private boolean isAccessible;
     private boolean pandemicMode = false;
     @OneToMany(mappedBy = "room")
+    @JsonManagedReference(value = "room")
     private List<Booking> bookings = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "building_id", referencedColumnName="id", nullable = false)
@@ -105,7 +107,7 @@ public class Room {
         }
     }
 
-    public boolean isBooked(LocalDateTime time) {
+    public boolean isBooked(OffsetDateTime time) {
         boolean booked = false;
         for (Booking booking : bookings) {
             if (time.isAfter(booking.getTimeStart()) && time.isBefore(booking.getTimeEnd())) {

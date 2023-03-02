@@ -10,7 +10,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+
+import java.time.OffsetDateTime;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -66,7 +68,7 @@ public class BookingService {
         return false;
     }
 
-    public boolean changeBooking(String token, LocalDateTime time) {
+    public boolean changeBooking(String token, OffsetDateTime time) {
         Booking booking = bookingRepository.findByToken(token);
         if (booking.getRoom().isBooked(time)){
             return false;
@@ -97,7 +99,7 @@ public class BookingService {
     }
 
     public boolean bookingCleanup() {
-        LocalDateTime current = LocalDateTime.now();
+        OffsetDateTime current = OffsetDateTime.now();
         List<Booking> bookingList = getBookings();
         for (Booking booking: bookingList) {
             if (booking.getTimeEnd().isBefore(current)) {
