@@ -1,5 +1,6 @@
 package CG.RoomService.Models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,6 +36,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference(value = "user")
     private List<Booking> bookings = new ArrayList<>();
 
 
