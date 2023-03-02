@@ -1,5 +1,6 @@
 package CG.RoomService.Models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.OffsetDateTime;
@@ -15,6 +16,7 @@ public class Booking {
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "room_id", referencedColumnName = "id", nullable = false)
         @JoinColumn(name = "room_name", referencedColumnName = "name", nullable = false)
+        @JsonBackReference(value = "room")
         private Room room;
         @Column(name = "token", unique = true)
         private String token;
@@ -25,6 +27,7 @@ public class Booking {
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
         @JoinColumn(name = "user_email", referencedColumnName = "email", nullable = false)
+        @JsonBackReference(value = "user")
         private User user;
 
         public Booking() {

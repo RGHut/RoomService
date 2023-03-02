@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
+  getBooking(); 
+  var bookings = JSON.parse(localStorage.getItem("Bookings")); 
   var calendarEl = document.getElementById('calendar');
   var calendar = new FullCalendar.Calendar(calendarEl, {
     themeSystem: 'bootstrap5',
@@ -8,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     selectable: true,
     slotMinTime: '07:00:00',
     slotMaxTime: '19:00:00',
+    events: createCalendarEvents(bookings),
     hiddenDays: [0, 6],
     dateClick: function(info) {
       var localDate = moment(info.date).format('DD-MM-YYYY [Time:] HH:mm');
@@ -70,14 +73,47 @@ document.addEventListener('DOMContentLoaded', function () {
       document.body.appendChild(modal);
       var modalInstance = new bootstrap.Modal(modal);
       modalInstance.show();
+      const token = localStorage.getItem("jwtToken")
 
       // Add click event listener to the "Reserve" button
       var reserveBtn = modal.querySelector('#reserveBtn');
       reserveBtn.addEventListener('click', function() {
-        // Do something when the button is clicked
-        console.log('Reserve button clicked');
+        // Build the request body
         console.log(info.start);
         console.log(info.end);
+      
+        $.ajax({
+          url: "http://localhost:8080/makeBooking",
+          type: "POST",
+           beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+        },         
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          data: JSON.stringify({
+            "room": {
+              "name": "test"
+            },
+            "timeStart": info.start,
+            "timeEnd": info.end,
+            "user": {
+              "email": "test@cg.nl"
+            }
+          })
+        })
+        
+        .then(function(response) {
+          if (response.ok) {
+            console.log('Reservation request successful');
+          } else {
+            console.log('Reservation request failed');
+          }
+        })
+        .catch(function(error) {
+          console.error('Error making reservation request:', error);
+        });
+      
         modalInstance.hide();
         modal.remove();
       });
@@ -89,3 +125,22 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   calendar.render();
 });
+
+function createCalendarEvents(bookings) {
+  var events = [];
+  bookings.forEach(function(booking) {
+    var event = {
+      id: booking.id,
+      title: 'Booked',
+      start: booking.timeStart,
+      end: booking.timeEnd,
+      backgroundColor: '#007bff',
+      borderColor: '#007bff',
+      textColor: '#fff',
+      editable: false,
+      allDay: false
+    };
+    events.push(event);
+  });
+  return events;
+}
