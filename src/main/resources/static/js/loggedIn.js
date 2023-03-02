@@ -7,7 +7,7 @@ if (localStorage.getItem("jwtToken")) {
     const token = localStorage.getItem("jwtToken")
 
     $.ajax({
-        url: "http://localhost:8080/bookings",
+        url: "http://localhost:8080/demo-controller/admin",
         type: "GET",
         dataType: 'text',
 

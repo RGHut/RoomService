@@ -70,14 +70,46 @@ document.addEventListener('DOMContentLoaded', function () {
       document.body.appendChild(modal);
       var modalInstance = new bootstrap.Modal(modal);
       modalInstance.show();
+      const token = localStorage.getItem("jwtToken")
 
       // Add click event listener to the "Reserve" button
       var reserveBtn = modal.querySelector('#reserveBtn');
       reserveBtn.addEventListener('click', function() {
-        // Do something when the button is clicked
-        console.log('Reserve button clicked');
-        console.log(info.start);
-        console.log(info.end);
+        // Build the request body
+        
+      
+        $.ajax({
+          url: "http://localhost:8080/makeBooking",
+          type: "POST",
+           beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+        },         
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          data: JSON.stringify({
+            "room": {
+              "name": "test"
+            },
+            "timeStart": info.start,
+            "timeEnd": info.end,
+            "user": {
+              "email": "test@cg.nl"
+            }
+          })
+        })
+        
+        .then(function(response) {
+          if (response.ok) {
+            console.log('Reservation request successful');
+          } else {
+            console.log('Reservation request failed');
+          }
+        })
+        .catch(function(error) {
+          console.error('Error making reservation request:', error);
+        });
+      
         modalInstance.hide();
         modal.remove();
       });
