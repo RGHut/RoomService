@@ -1,5 +1,6 @@
 package CG.RoomService.Config;
 
+import CG.RoomService.Service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
