@@ -1,5 +1,6 @@
 package CG.RoomService.Models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public class Room {
     private boolean isAccessible;
     private boolean pandemicMode = false;
     @OneToMany(mappedBy = "room")
+    @JsonManagedReference(value = "room")
     private List<Booking> bookings = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "building_id", referencedColumnName="id", nullable = false)
