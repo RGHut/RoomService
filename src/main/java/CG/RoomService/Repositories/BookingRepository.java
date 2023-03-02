@@ -9,8 +9,8 @@ import java.util.UUID;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 //    Optional<Booking> findById(long id);
 
-    Booking findByToken(UUID token);
+    Booking findByToken(String token);
 
-    boolean existsBookingByToken(UUID token);
+    boolean existsBookingByToken(String token);
 
 }
