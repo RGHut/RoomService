@@ -98,6 +98,14 @@ public class BookingController {
         return ResponseEntity.status(400).body("{\"error\":\"booking does not exist\"}");
     }
 
+    @PostMapping("/getBookingByUser")
+    public ResponseEntity<?> getBookingByUser(@RequestParam String userEmail) {
+        if (bookingService.isUserExistByEmail(userEmail)) {
+            return ResponseEntity.status(200).body(bookingService.getBookingsByUser(userEmail));
+        }
+        return ResponseEntity.status(400).body("{\"error\":\"User with Email '" + userEmail + "' does not exist\"}");
+    }
+
     @DeleteMapping("/cleanBookings")
     public ResponseEntity<?> cleanBookings() {
         if (bookingService.bookingCleanup()) {

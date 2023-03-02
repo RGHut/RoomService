@@ -84,6 +84,11 @@ public class BuildingService {
         }
     }
 
+    public List<Room> getRoomsByBuilding(String buildingName) {
+        Building building = buildingRepository.findByName(buildingName);
+        return roomRepository.findByBuilding(building);
+    }
+
     public Room getRoom(String name) {
         return roomRepository.findByName(name);
     }
