@@ -11,10 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -81,6 +79,21 @@ public class BookingService {
 
     public boolean isBookingExist(String token) {
         return bookingRepository.existsBookingByToken(token);
+    }
+
+    public boolean isUserExistByEmail(String email) {
+        return userRepository.existsUserByEmail(email);
+    }
+
+    public List<Booking> getBookingsByUser(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        User user = optionalUser.get();
+        return (bookingRepository.findByUser(user));
+    }
+
+    public List<Booking> getBookingsByRoom(String roomName) {
+        Room room = roomRepository.findByName(roomName);
+        return (bookingRepository.findByRoom(room));
     }
 
     public boolean bookingCleanup() {
