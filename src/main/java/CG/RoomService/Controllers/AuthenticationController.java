@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * RequiredArgsConstructor annotation is used to create constructor with required fields
  */
 
-@CrossOrigin(origins = "localhost:5500")
+
 @RestController
 @RequestMapping("/test")
 @RequiredArgsConstructor

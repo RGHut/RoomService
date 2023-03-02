@@ -12,24 +12,26 @@ public class Booking {
         @GeneratedValue(strategy = GenerationType.SEQUENCE)
         @Column(name = "id", nullable = false)
         private long id;
-        @ManyToOne
-        @JoinColumn(name = "room_id", nullable = false)
-        private  Room room;
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "room_id", referencedColumnName = "id", nullable = false)
+        @JoinColumn(name = "room_name", referencedColumnName = "name", nullable = false)
+        private Room room;
         @Column(name = "token", unique = true)
-        private  UUID token;
+        private String token;
         @Column(name = "timeStart", nullable = false)
         private LocalDateTime timeStart;
         @Column(name = "timeEnd")
         private LocalDateTime timeEnd;
-        @ManyToOne
-        @JoinColumn(name = "user_id")
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+        @JoinColumn(name = "user_email", referencedColumnName = "email", nullable = false)
         private User user;
 
         public Booking() {
         }
 
         public Booking(Room room, LocalDateTime timeStart, LocalDateTime timeEnd, User user) {
-                this.token = UUID.randomUUID();
+                this.token = UUID.randomUUID().toString();
                 this.room = room;
                 this.timeStart = timeStart;
                 this.timeEnd = timeEnd;
@@ -65,11 +67,23 @@ public class Booking {
                 return timeEnd;
         }
 
-        public UUID getToken() {
+        public String getToken() {
                 return token;
+        }
+
+        public void generateToken() {
+                this.token = UUID.randomUUID().toString();
         }
 
         public User getUser() {
                 return this.user;
+        }
+
+        public void setUser(User user) {
+                this.user = user;
+        }
+
+        public void setRoom(Room room) {
+                this.room = room;
         }
 }
