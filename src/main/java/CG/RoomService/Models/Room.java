@@ -2,7 +2,7 @@ package CG.RoomService.Models;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,7 +105,7 @@ public class Room {
         }
     }
 
-    public boolean isBooked(LocalDateTime time) {
+    public boolean isBooked(OffsetDateTime time) {
         boolean booked = false;
         for (Booking booking : bookings) {
             if (time.isAfter(booking.getTimeStart()) && time.isBefore(booking.getTimeEnd())) {
