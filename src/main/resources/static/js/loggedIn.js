@@ -4,9 +4,6 @@ function logout() {
 }
 
 if (localStorage.getItem("jwtToken")) {
-    const token = localStorage.getItem("jwtToken")
-
-   
     $('#logoutButton').click(logout);
 } else {
     window.location.href = "/src/main/resources/static/index.html";

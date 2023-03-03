@@ -14,7 +14,7 @@ $(document).ready(function () {
             },
             success: function (data) {
                 var token = data.token;
-                console.log("Received token: " + token);
+                
 
                 // Store the token in local storage
                 localStorage.setItem("jwtToken", token);

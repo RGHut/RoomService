@@ -1,6 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
-  getBooking(); 
-  var bookings = JSON.parse(localStorage.getItem("Bookings")); 
+  getBooking();
+  document.querySelectorAll('.myButton').forEach(function(button) {
+    button.addEventListener('click', function(event) {
+      event.preventDefault();
+    });
+  });
+  
+  var bookings = JSON.parse(localStorage.getItem("Bookings"));
+  var events = createCalendarEvents(bookings);
   var calendarEl = document.getElementById('calendar');
   var calendar = new FullCalendar.Calendar(calendarEl, {
     themeSystem: 'bootstrap5',
@@ -10,137 +17,140 @@ document.addEventListener('DOMContentLoaded', function () {
     selectable: true,
     slotMinTime: '07:00:00',
     slotMaxTime: '19:00:00',
-    events: createCalendarEvents(bookings),
+    events: events,
     hiddenDays: [0, 6],
-    dateClick: function(info) {
-      var localDate = moment(info.date).format('DD-MM-YYYY [Time:] HH:mm');
-      var modal = document.createElement('div');
-      modal.classList.add('modal', 'fade');
-      modal.innerHTML = `
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Date clicked</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p>Clicked ${localDate}</p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-primary" id="reserveBtn">Reserve</button>
-            </div>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-      var modalInstance = new bootstrap.Modal(modal);
-      modalInstance.show();
+    eventSources: [
 
-      // Add click event listener to the "Reserve" button
-      var reserveBtn = modal.querySelector('#reserveBtn');
-      reserveBtn.addEventListener('click', function() {
-        // Do something when the button is clicked
-        console.log('Reserve button clicked');
-        modalInstance.hide();
-        modal.remove();
-      });
-
-      modal.addEventListener('hidden.bs.modal', function() {
-        modalInstance.dispose();
-      });
+    ],
+    datesSet: function(info) {
+      var startDate = info.start;
+      var endDate = info.end;
+      var events = createCalendarEvents(bookings, startDate, endDate);
+      calendar.removeAllEvents();
+      calendar.addEventSource(events);
     },
-    select: function(info) {      
-      var localStart = moment(info.start).format('DD-MM-YYYY [Time:] HH:mm');
-      var localEnd = moment(info.end).format('DD-MM-YYYY  [Time:] HH:mm');
-      var modal = document.createElement('div');
-      modal.classList.add('modal', 'fade');
-      modal.innerHTML = `
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Date range selected</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p>Selected ${localStart} to ${localEnd}</p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-primary" id="reserveBtn">Reserve</button>
+    eventClick: function(info) {
+      
+        var modalId = 'modal-' + info.event.id; // Add booking ID to modal ID
+        var reserveBtnId = 'reserveBtn-' + info.event.id; // Add booking ID to reserve button ID
+        var deleteBtnId = 'deleteBtn-' + info.event.id; // Add booking ID to delete button ID
+      
+        var modal = document.createElement('div');
+        modal.id = modalId; // Set modal ID
+        modal.classList.add('modal', 'fade');
+        modal.innerHTML = `
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Booking Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>Booked from ${moment(info.event.start).format('DD-MM-YYYY [Time:] HH:mm')} to ${moment(info.event.end).format('DD-MM-YYYY [Time:] HH:mm')}</p>
+                <p>Booked by: ${info.event.room}</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-action="delete" id="${deleteBtnId}">Delete</button>
+                <button type="button" class="btn btn-primary" data-action="reserve" id="${reserveBtnId}">Reserve</button>
+              </div>
             </div>
           </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-      var modalInstance = new bootstrap.Modal(modal);
-      modalInstance.show();
-      const token = localStorage.getItem("jwtToken")
-
-      // Add click event listener to the "Reserve" button
-      var reserveBtn = modal.querySelector('#reserveBtn');
-      reserveBtn.addEventListener('click', function() {
-        // Build the request body
-        console.log(info.start);
-        console.log(info.end);
+        `;
       
-        $.ajax({
-          url: "http://localhost:8080/makeBooking",
-          type: "POST",
-           beforeSend: function (xhr) {
-            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-        },         
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          data: JSON.stringify({
-            "room": {
-              "name": "test"
-            },
-            "timeStart": info.start,
-            "timeEnd": info.end,
-            "user": {
-              "email": "test@cg.nl"
+        document.body.appendChild(modal);
+        var modalInstance = new bootstrap.Modal(modal);
+        modalInstance.show();
+      
+        // Add click event listener to the buttons
+        var reserveBtn = modal.querySelector(`#${reserveBtnId}`);
+        if (reserveBtn) {
+          reserveBtn.addEventListener('click', function () {
+            // Check if this button is for an available slot or a booking
+            var action = this.dataset.action;
+            if (action === 'reserve') {
+              makeBooking("test", info.event.start, info.event.end, "test@cg.nl", calendar);
+              console.log('Reserve button clicked for an available slot');
             }
-          })
-        })
-        
-        .then(function(response) {
-          if (response.ok) {
-            console.log('Reservation request successful');
-          } else {
-            console.log('Reservation request failed');
-          }
-        })
-        .catch(function(error) {
-          console.error('Error making reservation request:', error);
-        });
+            modalInstance.hide();
+            modal.remove();
+          });
+        }
       
-        modalInstance.hide();
-        modal.remove();
-      });
-
-      modal.addEventListener('hidden.bs.modal', function() {
-        modalInstance.dispose();
-      });
-    }
-  });
+        var deleteBtn = modal.querySelector(`#${deleteBtnId}`);
+        if (deleteBtn) {
+          deleteBtn.addEventListener('click', function () {
+            deleteBooking(info.event.id, info.event.start, info.event.end, calendar);
+            console.log('Delete button clicked');
+            modalInstance.hide();
+            modal.remove();
+          });
+        }
+      }
+          
+      
+    });
   calendar.render();
-});
-
-function createCalendarEvents(bookings) {
+  calendar.on('datesSet', function (info) {
+    calendar.refetchEvents();
+  });
+  });
+function createCalendarEvents(bookings, startDate, endDate) {
+  var businessHours = {
+    start: '07:00', // your business hours
+    end: '19:00',
+    dow: [1, 2, 3, 4, 5] // Monday - Friday
+  };
+  
   var events = [];
+  
+  for (var i = 0; i < businessHours.dow.length; i++) {
+    var dow = businessHours.dow[i];
+    var start = moment(startDate).startOf('week').add(dow, 'days').add(businessHours.start);
+    var end = moment(endDate).startOf('week').add(dow, 'days').add(businessHours.end);
+    
+    while (start.isBefore(end)) {
+      var eventStart = start.format();
+      start.add(1, 'hour');
+      var eventEnd = start.format();
+      
+      var isBooked = false;
+      bookings.forEach(function(booking) {
+        if (moment(booking.timeStart).isBefore(eventEnd) && moment(booking.timeEnd).isAfter(eventStart)) {
+          // The time slot is already booked, so skip it
+          isBooked = true;
+        }
+      });
+      
+      if (!isBooked) {
+        events.push({
+          title: 'Available',
+          start: eventStart,
+          end: eventEnd,
+          backgroundColor: '#008000',
+          borderColor: '#008000',
+          textColor: '#fff',
+          editable: true,
+        });
+      }
+    }
+  }
+  
   bookings.forEach(function(booking) {
     var event = {
-      id: booking.id,
-      title: 'Booked',
+      id: booking.token,
+      title: "Booked",
       start: booking.timeStart,
       end: booking.timeEnd,
-      backgroundColor: '#007bff',
-      borderColor: '#007bff',
+      user: booking.user,
+      backgroundColor:  '#FF0000',
+      borderColor: '#FF0000',
       textColor: '#fff',
-      editable: false,
+      editable: true,
       allDay: false
     };
     events.push(event);
   });
+  
   return events;
 }
+
