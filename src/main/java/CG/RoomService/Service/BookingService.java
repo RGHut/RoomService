@@ -87,6 +87,10 @@ public class BookingService {
         return userRepository.existsUserByEmail(email);
     }
 
+    public boolean isRoomExistByName(String name) {
+        return roomRepository.existsRoomByName(name);
+    }
+
     public List<Booking> getBookingsByUser(String email) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
         User user = optionalUser.get();
