@@ -43,33 +43,7 @@ function makeBooking(name, timeStart, timeEnd, email, calendar) {
       }
     }),
     success:function (data) {
-       const token = data.split(' ')[2];
-       var bookingToken = token;
-       // add the new booking to local storage
-      var bookings = JSON.parse(localStorage.getItem("Bookings")) || [];
-      var newBooking = {
-        id: bookingToken,
-        timeStart: timeStart,
-        timeEnd: timeEnd
-      };
-      bookings.push(newBooking);
-      localStorage.setItem("Bookings", JSON.stringify(bookings));
-
-      // add the new booking to the calendar
-      var newEvent = {
-        id: bookingToken,
-        title: 'BookedTemp',
-        start: newBooking.timeStart,
-        end: newBooking.timeEnd,
-        backgroundColor: '#007bff',
-        borderColor: '#007bff',
-        textColor: '#fff',
-        editable: false,
-        allDay: false
-      };
-      console.log(newEvent)
-      calendar.addEvent(newEvent);
-      
+      getBooking();
     }, 
     
     error: function (xhr, status, error) {
@@ -93,16 +67,7 @@ $.ajax({
       
   success:function (data) {
         
-    var newEvent2 = {
-    title: 'Available',
-    start: eventStart,
-    end: eventEnd,
-    backgroundColor: '#008000',
-    borderColor: '#008000',
-    textColor: '#fff',
-    editable: false,
-  };
-  calendar.addEvent(newEvent2);
+    getBooking();
   
 },
   
