@@ -30,8 +30,8 @@ public class DataFactory {
         Building building = new Building("test1");
         Room room1 = new Room("test 1.1", 1, 4, true);
         Room room2 = new Room("test 1.2", 1, 4, true);
-        building.addRoom(room1);
-        building.addRoom(room2);
+
+
         if (!buildingService.addBuilding("test1")) {
             buildingService.addRoom(room1);
             buildingService.addRoom(room2);
