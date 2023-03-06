@@ -1,13 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
   getBooking();
+  getRooms("Gorilla");
   document.querySelectorAll('.myButton').forEach(function(button) {
     button.addEventListener('click', function(event) {
       event.preventDefault();
     });
   });
   
-  var bookings = JSON.parse(localStorage.getItem("Bookings"));
-  var events = createCalendarEvents(bookings);
+  var rooms = JSON.parse(localStorage.getItem("Rooms"));    
+  var events = createCalendarEvents(rooms);
   var calendarEl = document.getElementById('calendar');
   var calendar = new FullCalendar.Calendar(calendarEl, {
     themeSystem: 'bootstrap5',
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     datesSet: function(info) {
       var startDate = info.start;
       var endDate = info.end;
-      var events = createCalendarEvents(bookings, startDate, endDate);
+      var events = createCalendarEvents(rooms, startDate, endDate);
       calendar.removeAllEvents();
       calendar.addEventSource(events);
     },
@@ -68,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Check if this button is for an available slot or a booking
             var action = this.dataset.action;
             if (action === 'reserve') {
-              makeBooking("test", info.event.start, info.event.end, "test@cg.nl", calendar);
+              makeBooking(info.event.title, info.event.start, info.event.end, "test@cg.nl", calendar);
               console.log('Reserve button clicked for an available slot');
             }
             modalInstance.hide();
@@ -79,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var deleteBtn = modal.querySelector(`#${deleteBtnId}`);
         if (deleteBtn) {
           deleteBtn.addEventListener('click', function () {
-            deleteBooking(info.event.id, info.event.start, info.event.end, calendar);
+            deleteBooking(info.event.id, info.event.title);
             console.log('Delete button clicked');
             modalInstance.hide();
             modal.remove();
@@ -94,63 +95,75 @@ document.addEventListener('DOMContentLoaded', function () {
     calendar.refetchEvents();
   });
   });
-function createCalendarEvents(bookings, startDate, endDate) {
-  var businessHours = {
-    start: '07:00', // your business hours
-    end: '19:00',
-    dow: [1, 2, 3, 4, 5] // Monday - Friday
-  };
   
-  var events = [];
-  
-  for (var i = 0; i < businessHours.dow.length; i++) {
-    var dow = businessHours.dow[i];
-    var start = moment(startDate).startOf('week').add(dow, 'days').add(businessHours.start);
-    var end = moment(endDate).startOf('week').add(dow, 'days').add(businessHours.end);
-    
-    while (start.isBefore(end)) {
-      var eventStart = start.format();
-      start.add(1, 'hour');
-      var eventEnd = start.format();
-      
-      var isBooked = false;
-      bookings.forEach(function(booking) {
-        if (moment(booking.timeStart).isBefore(eventEnd) && moment(booking.timeEnd).isAfter(eventStart)) {
-          // The time slot is already booked, so skip it
-          isBooked = true;
-        }
-      });
-      
-      if (!isBooked) {
-        events.push({
-          title: 'Available',
-          start: eventStart,
-          end: eventEnd,
-          backgroundColor: '#008000',
-          borderColor: '#008000',
-          textColor: '#fff',
-          editable: true,
-        });
-      }
-    }
-  }
-  
-  bookings.forEach(function(booking) {
-    var event = {
-      id: booking.token,
-      title: "Booked",
-      start: booking.timeStart,
-      end: booking.timeEnd,
-      user: booking.user,
-      backgroundColor:  '#FF0000',
-      borderColor: '#FF0000',
-      textColor: '#fff',
-      editable: true,
-      allDay: false
+  function createCalendarEvents(rooms, startDate, endDate) {
+    var businessHours = {
+      start: '07:00', // your business hours
+      end: '19:00',
+      dow: [1, 2, 3, 4, 5] // Monday - Friday
     };
-    events.push(event);
-  });
   
-  return events;
-}
+    var events = [];
+  
+    rooms.forEach(function(room) {
+      getBookingByRoom(room.name);
+      bookings = JSON.parse(localStorage.getItem(room.name));
+      if (bookings === null) {
+        bookings = [];
+      }
+        for (var i = 0; i < businessHours.dow.length; i++) {
+          var dow = businessHours.dow[i];
+          var start = moment(startDate).startOf('week').add(dow, 'days').add(businessHours.start);
+          var end = moment(endDate).startOf('week').add(dow, 'days').add(businessHours.end);
+  
+          while (start.isBefore(end)) {
+            var eventStart = start.format();
+            start.add(1, 'hour');
+            var eventEnd = start.format();
+  
+            var isBooked = false;
+            bookings.forEach(function(booking) {
+              if (moment(booking.timeStart).isBefore(eventEnd) && moment(booking.timeEnd).isAfter(eventStart)) {
+                // The time slot is already booked, so skip it
+                isBooked = true;
+              }
+            });
+  
+            if (!isBooked) {
+              events.push({
+                title: room.name,
+                start: eventStart,
+                end: eventEnd,
+                backgroundColor: '#008000',
+                borderColor: '#008000',
+                textColor: '#fff',
+                editable: true,
+              });
+            }
+          }
+        }
+  
+        bookings.forEach(function(booking) {
+              var event = {
+              id: booking.token,
+              title: room.name,
+              start: booking.timeStart,
+              end: booking.timeEnd,
+              user: booking.user,
+              backgroundColor:  '#FF0000',
+              borderColor: '#FF0000',
+              textColor: '#fff',
+              editable: true,
+              allDay: false
+            };
+            events.push(event);
+          
+        });
+      
+      });
+    
+  
+    return events;
+  }
 
+  
