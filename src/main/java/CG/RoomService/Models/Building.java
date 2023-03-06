@@ -1,5 +1,6 @@
 package CG.RoomService.Models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class Building {
     @Column(name = "name", unique = true)
     private String name;
     @OneToMany(mappedBy = "building")
+    @JsonManagedReference(value = "building")
     private List<Room> rooms = new ArrayList<>();
 
 

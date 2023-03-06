@@ -1,5 +1,6 @@
 package CG.RoomService.Models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -30,6 +31,7 @@ public class Room {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "building_id", referencedColumnName="id", nullable = false)
     @JoinColumn(name = "building_name", referencedColumnName = "name", nullable = false)
+    @JsonBackReference(value = "building")
     private Building building;
 
     public Room(String name, int floor, int maxOccupancy, boolean isAccessible) {
