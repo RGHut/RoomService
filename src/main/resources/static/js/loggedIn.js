@@ -1,10 +1,9 @@
-function logout() {
-    localStorage.removeItem("jwtToken");
-    window.location.href = "../static/index.html";
-}
+// function logout() {
+//     document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+// }
 
-if (localStorage.getItem("jwtToken")) {
-    $('#logoutButton').click(logout);
-} else {
-    window.location.href = "../static/index.html";
-}
+// if (document.cookie.indexOf("jwt") !== -1) {
+//     $('#logoutButton').click(logout);
+// } else {
+//     window.location.href = "../static/index.html";
+// }

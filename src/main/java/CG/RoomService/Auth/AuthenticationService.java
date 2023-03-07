@@ -4,6 +4,8 @@ import CG.RoomService.Service.JwtService;
 import CG.RoomService.Models.Role;
 import CG.RoomService.Models.User;
 import CG.RoomService.Repositories.UserRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -65,7 +67,7 @@ public class AuthenticationService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletResponse response) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -75,9 +77,16 @@ public class AuthenticationService {
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
-        AuthenticationResponse response = AuthenticationResponse.builder()
-                .token(jwtToken)
+
+        // Set JWT token in an HTTP-only cookie
+        Cookie cookie = new Cookie("jwt", jwtToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(1800);
+        response.addCookie(cookie);
+
+        return AuthenticationResponse.builder()
                 .build();
-        return response;
     }
 }

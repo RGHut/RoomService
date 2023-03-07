@@ -12,6 +12,7 @@ import CG.RoomService.Repositories.RoomRepository;
 import CG.RoomService.Service.BookingService;
 import CG.RoomService.Service.BuildingService;
 import CG.RoomService.Service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -119,12 +120,9 @@ public class AuthenticationController {
      * @return a ResponseEntity with an AuthenticationResponse object
      */
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestParam String email,
-            @RequestParam String password
-    ) {
-        AuthenticationRequest request = new AuthenticationRequest(email, password);
-        return ResponseEntity.ok(service.authenticate(request));
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request, HttpServletResponse response) {
+        AuthenticationResponse authResponse = service.authenticate(request, response);
+        return ResponseEntity.ok(authResponse);
     }
     @GetMapping("/user")
     public ResponseEntity<String> sayHello() {

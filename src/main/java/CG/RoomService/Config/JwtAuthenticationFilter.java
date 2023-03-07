@@ -3,6 +3,7 @@ package CG.RoomService.Config;
 import CG.RoomService.Service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -40,43 +41,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        // Get the auth header from the request
-        final String authHeader = request.getHeader(HEADER_STRING);
-        // String variable to hold the JWT token
+        // Get the JWT token from the cookie
         final String jwt;
         // String variable to hold the user email
         final String userEmail;
-        // Check if the auth header is null or doesn't start with the expected prefix
-        if (authHeader == null || !authHeader.startsWith(TOKEN_PREFIX)) {
-            // If true, continue with the filter chain
-            filterChain.doFilter(request, response);
-            return;
-        }
-        // Extract the JWT token from the auth header
-        jwt = authHeader.substring(7);
-        // Extract the username (user email) from the JWT token
-        userEmail = jwtService.extractUsername(jwt);
-        // Check if the user email is not null and the current authentication is null
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // If true, load the user details by email
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-            // Check if the JWT token is valid for the user details
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                // If true, create an instance of UsernamePasswordAuthenticationToken with user details, null and user authorities
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-                // set the WebAuthenticationDetailsSource as the details of authToken
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
-                );
-                // set the authToken as the current authentication
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("jwt")) {
+                    jwt = cookie.getValue();
+                    userEmail = jwtService.extractUsername(jwt);
+                    if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                        UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+                        if (jwtService.isTokenValid(jwt, userDetails)) {
+                            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
+                            authToken.setDetails(
+                                    new WebAuthenticationDetailsSource().buildDetails(request)
+                            );
+                            SecurityContextHolder.getContext().setAuthentication(authToken);
+                        }
+                    }
+                    break;
+                }
             }
         }
-        // continue with the filter chain
         filterChain.doFilter(request, response);
     }
 }
