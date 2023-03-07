@@ -65,5 +65,9 @@ public class Building {
         this.rooms.add(room);
     }
 
+    public void removeRoom(Room room) {
+        this.rooms.remove(room);
+    }
+
 
 }
