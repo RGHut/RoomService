@@ -17,6 +17,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
+
 /**
  * Security configuration for the application
  *
@@ -44,7 +46,7 @@ public class SecurityConfiguration extends GlobalAuthenticationConfigurerAdapter
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5500", "http://127.0.0.1:4040"));
+        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5500", "http://127.0.0.1:5501"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -64,10 +66,12 @@ public class SecurityConfiguration extends GlobalAuthenticationConfigurerAdapter
                 // disable csrf protection
                 .csrf()
                 .disable()
-                // configure authorization for requests
+                .headers().frameOptions().disable()
+                .and()
                 .authorizeHttpRequests()
-                // permit all requests to /test/** and /h2/**
-                .requestMatchers("/test/**", "/h2/**")
+                .requestMatchers(toH2Console())
+                .permitAll()
+                .requestMatchers("/test/**")
                 .permitAll()
                 // permit requests to /demo-controller/admin/** for users with ADMIN authority
                 .requestMatchers("/admin/**").hasAnyAuthority("ADMIN","SYSTEM_ADMIN")

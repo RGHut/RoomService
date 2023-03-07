@@ -1,22 +1,17 @@
 package CG.RoomService.Controllers;
 
 import CG.RoomService.Models.Booking;
-import CG.RoomService.Models.Building;
-import CG.RoomService.Models.Room;
 
-import CG.RoomService.Models.User;
-import CG.RoomService.Repositories.BookingRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import CG.RoomService.Service.BookingService;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.UUID;
+import java.time.OffsetDateTime;
+import java.util.List;
+
 
 /**
  * This class is a RESTful controller for handling bookings of rooms in a building.
@@ -28,124 +23,104 @@ import java.util.UUID;
  * The code also appears to use a local ArrayList to store bookings, and uses the `BuildingController` class to retrieve buildings.
  */
 @RestController
+@RequiredArgsConstructor
 public class BookingController {
-    @Autowired
-    private BookingRepository bookingRepository;
 
-    private final ThreadLocal<ArrayList<Booking>> bookings = ThreadLocal.withInitial(() -> (ArrayList<Booking>) bookingRepository.findAll());
+    private final BookingService bookingService;
 
     /**
      * Endpoint for getting all bookings
-     * @return ArrayList<Booking> list of all bookings
+     *
+     * @return List<Booking> list of all bookings
      */
     @GetMapping("/bookings")
-    public ArrayList<Booking> getBookings() {
-        return (ArrayList<Booking>) bookingRepository.findAll();
+    public ResponseEntity<List<Booking>> getBookings() {
+        return ResponseEntity.status(200).body(bookingService.getBookings());
 //        return bookings;
     }
-
     /**
      * Creates a new booking with the given building name, room name and time
-     * @param buildingName - The name of the building for the booking
-     * @param roomName - The name of the room for the booking
-     * @param time - The start time of the booking
+     * @param booking - booking object to be saved in the database
      * @return - HTTP response with a success or error message
      */
     @PostMapping("/makeBooking")
-    public ResponseEntity<?> makeBooking(@RequestParam String buildingName, @RequestParam String roomName, @RequestParam LocalDateTime time, @RequestParam User user) {
-
-        for (Building building: BuildingController.getBuildings()) {
-            if (building.getName().equals(buildingName)) {
-                for (Room room : building.getRooms()) {
-                    if (room.getName().equals(roomName)) {
-                        if (room.isBooked(time)) {
-                            return ResponseEntity.status(400).body("{\"error\":\"Room is already booked for that timeslot!\"}");
-                        } else {
-                            Booking booking = user.makeBooking(room, time);
-                            bookings.get().add(booking);
-                            bookingRepository.save(booking);
-                            return ResponseEntity.status(200).body("{\"Booking created\" " + booking.getToken() + "}");
-                        }
-                    }
-                }
-                return ResponseEntity.status(400).body("{\"error\":\"Room does not exists!\"}");
-            }
+    public ResponseEntity<?> makeBooking(@RequestBody Booking booking) {
+        if (bookingService.makeBooking(booking)){
+            return ResponseEntity.status(200).body("{\"Booking created\" " + booking.getToken() + "}");
         }
-        return ResponseEntity.status(400).body("{\"error\":\"Building does not exists!\"}");
+        return ResponseEntity.status(400).body("{\"error\":\"Booking failed\"}");
     }
 
     /**
      * Cancels a booking with the given token
+     *
      * @param token - The unique token for the booking
      * @return - HTTP response with a success or error message
      */
     @PostMapping("/cancelBooking")
     public ResponseEntity<?> cancelBooking(@RequestParam String token) {
-        if (bookingRepository.existsBookingByToken(UUID.fromString(token))) {
-            Booking booking = bookingRepository.findByToken(UUID.fromString(token));
-            bookingRepository.deleteById(booking.getId());
-            booking.getUser().cancelBooking(booking);
+        if (bookingService.cancelBooking(token)) {
             return ResponseEntity.status(200).body("{\"booking removed\"}");
-        }
-        for (Booking booking: bookings.get()) {
-            if (booking.getToken().toString().equals(token)) {
-                bookings.get().remove(booking);
-                booking.getUser().cancelBooking(booking);
-                return ResponseEntity.status(200).body("{\"booking removed\"}");
-            }
         }
         return ResponseEntity.status(400).body("{\"error\": \"booking does not exist!\"}");
     }
 
     /**
      * Changes the time of a booking.
+     *
      * @param token The token of the booking to change
-     * @param time The new time for the booking
+     * @param time  The new time for the booking
      * @return A response indicating whether the booking was changed successfully or not
      */
     @PostMapping("/changeBooking")
-    public ResponseEntity<?> changeBooking(@RequestParam String token, @RequestParam LocalDateTime time) {
-        if (bookingRepository.existsBookingByToken(UUID.fromString(token))) {
-            Booking booking = bookingRepository.findByToken(UUID.fromString(token));
-            if (booking.getRoom().isBooked(time)) {
-                return ResponseEntity.status(400).body("{\"error\":\"Room is already booked for that timeslot!\"}");
-            } else {
-                booking.setTimeStart(time);
-                bookingRepository.save(booking);
+    public ResponseEntity<?> changeBooking(@RequestParam String token, @RequestParam OffsetDateTime time) {
+        if (bookingService.isBookingExist(token)) {
+            if (bookingService.changeBooking(token, time)) {
                 return ResponseEntity.status(200).body("{\"booking changed to " + time + "\"}");
+
             }
-        }
-        for (Booking booking: bookings.get()) {
-            if (booking.getToken().toString().equals(token)) {
-                if (booking.getRoom().isBooked(time)) {
-                    return ResponseEntity.status(400).body("{\"error\":\"Room is already booked for that timeslot!\"}");
-                } else {
-                    booking.setTimeStart(time);
-                    bookingRepository.save(booking);
-                    return ResponseEntity.status(200).body("{\"booking changed to " + time + "\"}");
-                }
-            }
+            return ResponseEntity.status(400).body("{\"error\":\"Room is already booked for that timeslot!\"}");
         }
         return ResponseEntity.status(400).body("{\"error\":\"booking does not exist!\"}");
     }
 
     /**
      * Retrieves a booking by its token.
+     *
      * @param token The token of the booking to retrieve
      * @return The booking if it exists, or a response indicating that the booking does not exist
      */
     @PostMapping("/getBooking")
-    public ResponseEntity<?> getBooking(@RequestParam String token){
-        if (bookingRepository.existsBookingByToken(UUID.fromString(token))) {
-            Booking booking = bookingRepository.findByToken(UUID.fromString(token));
-            return ResponseEntity.status(200).body(booking);
-        }
-        for (Booking booking: bookings.get()) {
-            if (booking.getToken().toString().equals(token)) {
-                return ResponseEntity.status(200).body(booking);
-            }
+    public ResponseEntity<?> getBooking(@RequestParam String token) {
+        if (bookingService.isBookingExist(token)) {
+            return ResponseEntity.status(200).body(bookingService.getBooking(token));
         }
         return ResponseEntity.status(400).body("{\"error\":\"booking does not exist\"}");
+    }
+
+    @PostMapping("/getBookingByUser")
+    public ResponseEntity<?> getBookingByUser(@RequestParam String userEmail) {
+        if (bookingService.isUserExistByEmail(userEmail)) {
+            return ResponseEntity.status(200).body(bookingService.getBookingsByUser(userEmail));
+        }
+        return ResponseEntity.status(400).body("{\"error\":\"User with Email '" + userEmail + "' does not exist\"}");
+    }
+
+    @PostMapping("/getBookingByRoom")
+    public ResponseEntity<?> getBookingsByRoom(@RequestParam String roomName) {
+        if (bookingService.isRoomExistByName(roomName)) {
+            return ResponseEntity.status(200).body(bookingService.getBookingsByRoom(roomName));
+        }
+        return ResponseEntity.status(400).body("{\"error\":\"Room does not exist\"}");
+    }
+
+    @DeleteMapping("/cleanBookings")
+    public ResponseEntity<?> cleanBookings() {
+        if (bookingService.bookingCleanup()) {
+            return ResponseEntity.status(200).body("{\"Booking cleanup successful\"}");
+        }
+
+        return ResponseEntity.status(400).body("{\"error\":\"something went wrong during cleanup\"}");
     }
 
 }

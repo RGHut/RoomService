@@ -1,12 +1,15 @@
 package CG.RoomService.Models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "room", uniqueConstraints = {@UniqueConstraint(columnNames = {"building_name", "name"})})
 public class Room {
 
     @Id
@@ -23,9 +26,12 @@ public class Room {
     private boolean isAccessible;
     private boolean pandemicMode = false;
     @OneToMany(mappedBy = "room")
+    @JsonManagedReference(value = "room")
     private List<Booking> bookings = new ArrayList<>();
-    @ManyToOne
-    @JoinColumn(name = "building_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "building_id", referencedColumnName="id", nullable = false)
+    @JoinColumn(name = "building_name", referencedColumnName = "name", nullable = false)
+    @JsonBackReference(value = "building")
     private Building building;
 
     public Room(String name, int floor, int maxOccupancy, boolean isAccessible) {
@@ -64,10 +70,9 @@ public class Room {
     }
 
 
-    public Booking makeBooking(LocalDateTime start, User user) {
-        Booking booking = new Booking(this, start, user);
+    public void makeBooking(Booking booking) {
         this.bookings.add(booking);
-        return(booking);
+        booking.setRoom(this);
     }
 
     public void cancelBooking(Booking booking) {
@@ -104,7 +109,7 @@ public class Room {
         }
     }
 
-    public boolean isBooked(LocalDateTime time) {
+    public boolean isBooked(OffsetDateTime time) {
         boolean booked = false;
         for (Booking booking : bookings) {
             if (time.isAfter(booking.getTimeStart()) && time.isBefore(booking.getTimeEnd())) {

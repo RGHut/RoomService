@@ -1,8 +1,9 @@
 package CG.RoomService.Models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -12,31 +13,35 @@ public class Booking {
         @GeneratedValue(strategy = GenerationType.SEQUENCE)
         @Column(name = "id", nullable = false)
         private long id;
-        @ManyToOne
-        @JoinColumn(name = "room_id", nullable = false)
-        private  Room room;
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "room_id", referencedColumnName = "id", nullable = false)
+        @JoinColumn(name = "room_name", referencedColumnName = "name", nullable = false)
+        @JsonBackReference(value = "room")
+        private Room room;
         @Column(name = "token", unique = true)
-        private  UUID token;
+        private String token;
         @Column(name = "timeStart", nullable = false)
-        private LocalDateTime timeStart;
+        private OffsetDateTime timeStart;
         @Column(name = "timeEnd")
-        private LocalDateTime timeEnd;
-        @ManyToOne
-        @JoinColumn(name = "user_id")
+        private OffsetDateTime timeEnd;
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+        @JoinColumn(name = "user_email", referencedColumnName = "email", nullable = false)
+        @JsonBackReference(value = "user")
         private User user;
 
         public Booking() {
         }
 
-        public Booking(Room room, LocalDateTime timeStart, LocalDateTime timeEnd, User user) {
-                this.token = UUID.randomUUID();
+        public Booking(Room room, OffsetDateTime timeStart, OffsetDateTime timeEnd, User user) {
+                this.token = UUID.randomUUID().toString();
                 this.room = room;
                 this.timeStart = timeStart;
                 this.timeEnd = timeEnd;
                 this.user = user;
         }
 
-        public Booking(Room room, LocalDateTime timeStart, User user) {
+        public Booking(Room room, OffsetDateTime timeStart, User user) {
                 this(room, timeStart, timeStart.plusHours(1), user);
         }
 
@@ -48,28 +53,40 @@ public class Booking {
                 return room;
         }
 
-        public void setTimeStart(LocalDateTime newTime) {
+        public void setTimeStart(OffsetDateTime newTime) {
                 this.timeStart = newTime;
                 this.timeEnd = newTime.plusHours(1);
         }
 
-        public LocalDateTime getTimeStart() {
+        public OffsetDateTime getTimeStart() {
                 return timeStart;
         }
 
-        public void setTimeEnd(LocalDateTime timeEnd) {
+        public void setTimeEnd(OffsetDateTime timeEnd) {
                 this.timeEnd = timeEnd;
         }
 
-        public LocalDateTime getTimeEnd() {
+        public OffsetDateTime getTimeEnd() {
                 return timeEnd;
         }
 
-        public UUID getToken() {
+        public String getToken() {
                 return token;
+        }
+
+        public void generateToken() {
+                this.token = UUID.randomUUID().toString();
         }
 
         public User getUser() {
                 return this.user;
+        }
+
+        public void setUser(User user) {
+                this.user = user;
+        }
+
+        public void setRoom(Room room) {
+                this.room = room;
         }
 }

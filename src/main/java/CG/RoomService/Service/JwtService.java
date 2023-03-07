@@ -1,4 +1,4 @@
-package CG.RoomService.Config;
+package CG.RoomService.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
