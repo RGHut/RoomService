@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   getBooking();
-  getRooms("Gorilla");
+  getRooms("test1");
   document.querySelectorAll('.myButton').forEach(function(button) {
     button.addEventListener('click', function(event) {
       event.preventDefault();
