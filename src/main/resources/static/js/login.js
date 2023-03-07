@@ -18,7 +18,7 @@ $(document).ready(function () {
 
                 // Store the token in local storage
                 localStorage.setItem("jwtToken", token);
-                window.location.href = "/src/main/resources/static/home.html";
+                window.location.href = "../static/home.html";
             },
             error: function (xhr, status, error) {
                 console.log("Error: " + error);
