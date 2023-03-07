@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var calendar = new FullCalendar.Calendar(calendarEl, {
     themeSystem: 'bootstrap5',
     timeZone: 'local',
+    allDaySlot: false,
     locale: navigator.language,
     initialView: 'timeGridWeek',
     selectable: true,
@@ -69,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Check if this button is for an available slot or a booking
             var action = this.dataset.action;
             if (action === 'reserve') {
-              makeBooking(info.event.title, info.event.start, info.event.end, "test@cg.nl", calendar);
+              makeBooking(info.event.title, info.event.start, info.event.end, "test2@cg.nl", calendar);
               console.log('Reserve button clicked for an available slot');
             }
             modalInstance.hide();
