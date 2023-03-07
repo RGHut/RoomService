@@ -49,8 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
               </div>
               <div class="modal-body">
                 <p>Booked from ${moment(info.event.start).format('DD-MM-YYYY [Time:] HH:mm')} to ${moment(info.event.end).format('DD-MM-YYYY [Time:] HH:mm')}</p>
-                <p>Booked by: ${info.event.room}</p>
-              </div>
+                </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-action="delete" id="${deleteBtnId}">Delete</button>
                 <button type="button" class="btn btn-primary" data-action="reserve" id="${reserveBtnId}">Reserve</button>
