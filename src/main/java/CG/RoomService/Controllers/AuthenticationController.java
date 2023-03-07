@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * RestController annotation is used to mark this class as a controller where every method returns a domain object instead of a view.
@@ -65,17 +66,17 @@ public class AuthenticationController {
             User user3 = userService.findByEmail("test3@cg.nl").get();
             Room room1 = buildingService.getRoom("test 1.1");
             Room room2 = buildingService.getRoom("test 1.2");
-            Booking booking1 = new Booking(room1, OffsetDateTime.now().plusHours(1), user1);
+            Booking booking1 = new Booking(room1, OffsetDateTime.now().plusHours(1).truncatedTo(ChronoUnit.HOURS), user1);
             bookingService.makeBooking(booking1);
-            Booking booking2 = new Booking(room1, OffsetDateTime.now().plusHours(3), user2);
+            Booking booking2 = new Booking(room1, OffsetDateTime.now().plusHours(3).truncatedTo(ChronoUnit.HOURS), user2);
             bookingService.makeBooking(booking2);
-            Booking booking3 = new Booking(room2, OffsetDateTime.now().plusHours(1), user3);
+            Booking booking3 = new Booking(room2, OffsetDateTime.now().plusHours(1).truncatedTo(ChronoUnit.HOURS), user3);
             bookingService.makeBooking(booking3);
-            Booking booking4 = new Booking(room2, OffsetDateTime.now().plusHours(3), user1);
+            Booking booking4 = new Booking(room2, OffsetDateTime.now().plusHours(3).truncatedTo(ChronoUnit.HOURS), user1);
             bookingService.makeBooking(booking4);
-            Booking booking5 = new Booking(room2, OffsetDateTime.now().plusDays(1).plusHours(2), user2);
+            Booking booking5 = new Booking(room2, OffsetDateTime.now().plusDays(1).plusHours(2).truncatedTo(ChronoUnit.HOURS), user2);
             bookingService.makeBooking(booking5);
-            Booking booking6 = new Booking(room1, OffsetDateTime.now().plusDays(1).plusHours(4), user3);
+            Booking booking6 = new Booking(room1, OffsetDateTime.now().plusDays(1).plusHours(4).truncatedTo(ChronoUnit.HOURS), user3);
             bookingService.makeBooking(booking6);
             return ResponseEntity.status(200).body("{\"test bookings generated\"}");
         }
