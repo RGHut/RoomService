@@ -100,10 +100,8 @@ public class AuthenticationController implements HttpServletResponse {
 
 
     /**
-     * The PostMapping annotation is used to handle HTTP POST requests.
+
      * This method is used for registration, the request body is mapped to a RegisterRequest object
-     *
-     * @param firstName the request containing the user's registration information
      * @return a ResponseEntity with an AuthenticationResponse object
      */
     @PostMapping("/register")
@@ -113,11 +111,6 @@ public class AuthenticationController implements HttpServletResponse {
     }
 
     /**
-     * The PostMapping annotation is used to handle HTTP POST requests.
-     * This method is used for authentication, the request body is mapped to an AuthenticationRequest object
-     *
-     * @param email the request containing the user's authentication information
-     * @param password password of the user
      * @return a ResponseEntity with an AuthenticationResponse object
      */
     @PostMapping("/authenticate")
