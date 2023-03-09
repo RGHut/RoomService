@@ -33,7 +33,7 @@ public class AuthenticationService {
      * @param request RegisterRequest object containing user details
      * @return AuthenticationResponse object containing JWT token
      */
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthenticationResponse register(RegisterRequest request, HttpServletResponse response) {
         var user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
@@ -44,8 +44,16 @@ public class AuthenticationService {
                 .build();
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);
+
+        // Set JWT token in an HTTP-only cookie
+        Cookie cookie = new Cookie("jwt", jwtToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(1800);
+        response.addCookie(cookie);
+
         return AuthenticationResponse.builder()
-                .token(jwtToken)
                 .build();
     }
 

@@ -12,13 +12,19 @@ import CG.RoomService.Repositories.RoomRepository;
 import CG.RoomService.Service.BookingService;
 import CG.RoomService.Service.BuildingService;
 import CG.RoomService.Service.UserService;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.Locale;
 
 /**
  * RestController annotation is used to mark this class as a controller where every method returns a domain object instead of a view.
@@ -31,11 +37,184 @@ import java.time.temporal.ChronoUnit;
 @RequestMapping("/test")
 @RequiredArgsConstructor
 public class AuthenticationController {
+    HttpServletResponse response = new HttpServletResponse() {
+        @Override
+        public String getCharacterEncoding() {
+            return null;
+        }
+
+        @Override
+        public String getContentType() {
+            return null;
+        }
+
+        @Override
+        public ServletOutputStream getOutputStream() throws IOException {
+            return null;
+        }
+
+        @Override
+        public PrintWriter getWriter() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void setCharacterEncoding(String charset) {
+
+        }
+
+        @Override
+        public void setContentLength(int len) {
+
+        }
+
+        @Override
+        public void setContentLengthLong(long length) {
+
+        }
+
+        @Override
+        public void setContentType(String type) {
+
+        }
+
+        @Override
+        public void setBufferSize(int size) {
+
+        }
+
+        @Override
+        public int getBufferSize() {
+            return 0;
+        }
+
+        @Override
+        public void flushBuffer() throws IOException {
+
+        }
+
+        @Override
+        public void resetBuffer() {
+
+        }
+
+        @Override
+        public boolean isCommitted() {
+            return false;
+        }
+
+        @Override
+        public void reset() {
+
+        }
+
+        @Override
+        public void setLocale(Locale loc) {
+
+        }
+
+        @Override
+        public Locale getLocale() {
+            return null;
+        }
+
+        @Override
+        public void addCookie(Cookie cookie) {
+
+        }
+
+        @Override
+        public boolean containsHeader(String name) {
+            return false;
+        }
+
+        @Override
+        public String encodeURL(String url) {
+            return null;
+        }
+
+        @Override
+        public String encodeRedirectURL(String url) {
+            return null;
+        }
+
+        @Override
+        public void sendError(int sc, String msg) throws IOException {
+
+        }
+
+        @Override
+        public void sendError(int sc) throws IOException {
+
+        }
+
+        @Override
+        public void sendRedirect(String location) throws IOException {
+
+        }
+
+        @Override
+        public void setDateHeader(String name, long date) {
+
+        }
+
+        @Override
+        public void addDateHeader(String name, long date) {
+
+        }
+
+        @Override
+        public void setHeader(String name, String value) {
+
+        }
+
+        @Override
+        public void addHeader(String name, String value) {
+
+        }
+
+        @Override
+        public void setIntHeader(String name, int value) {
+
+        }
+
+        @Override
+        public void addIntHeader(String name, int value) {
+
+        }
+
+        @Override
+        public void setStatus(int sc) {
+
+        }
+
+        @Override
+        public int getStatus() {
+            return 0;
+        }
+
+        @Override
+        public String getHeader(String name) {
+            return null;
+        }
+
+        @Override
+        public Collection<String> getHeaders(String name) {
+            return null;
+        }
+
+        @Override
+        public Collection<String> getHeaderNames() {
+            return null;
+        }
+    };
 
 
     private final BuildingService buildingService;
     private final BookingService bookingService;
     private final UserService userService;
+
+    private final AuthenticationService service;
 
     @GetMapping("/testData")
     public ResponseEntity<?> generateData() {
@@ -49,11 +228,11 @@ public class AuthenticationController {
             buildingService.addRoom(room1);
             buildingService.addRoom(room2);
             RegisterRequest request = new RegisterRequest("test1", "lastName", "test1@cg.nl", "12345", "cg");
-            service.register(request);
+            service.register(request, response);
             RegisterRequest request2 = new RegisterRequest("test2", "lastName", "test2@cg.nl", "12345", "cg");
-            service.register(request2);
+            service.register(request2, response);
             RegisterRequest request3 = new RegisterRequest("test3", "lastName", "test3@cg.nl", "12345", "cg");
-            service.register(request3);
+            service.register(request3, response);
             return ResponseEntity.status(200).body("{\"Generated test data\"}");
         }
         return ResponseEntity.status(400).body("{\"Test data already exists\"}");
@@ -88,8 +267,8 @@ public class AuthenticationController {
     /**
      * The service instance being used to perform authentication and registration operations
      */
-    private final AuthenticationService service;
-    private final RoomRepository roomRepository;
+
+
 
     /**
      * The PostMapping annotation is used to handle HTTP POST requests.
@@ -99,16 +278,9 @@ public class AuthenticationController {
      * @return a ResponseEntity with an AuthenticationResponse object
      */
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
-            @RequestParam String firstName,
-            @RequestParam String lastName,
-            @RequestParam String company,
-            @RequestParam String email,
-            @RequestParam String password
-
-    ) {
-        RegisterRequest request = new RegisterRequest(firstName, lastName, email, password, company);
-        return ResponseEntity.ok(service.register(request));
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request, HttpServletResponse response) {
+        AuthenticationResponse authResponse = service.register(request, response);
+        return ResponseEntity.ok(authResponse);
     }
 
     /**
