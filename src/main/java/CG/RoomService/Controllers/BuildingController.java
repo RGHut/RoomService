@@ -23,11 +23,20 @@ public class BuildingController {
     private final BuildingService buildingService;
 
 
+    /**
+     * API endpoint to get a list of buildings from the database
+     * @return a list of buildings
+     */
     @GetMapping("/buildings")
     public ArrayList<Building> getBuildings() {
         return buildingService.getBuildings();
     }
 
+    /**
+     *API endpoint to get a list of rooms from a given building
+     * @param name of the building
+     * @return ResponseBody with a list of rooms or an error message
+     */
     @PostMapping("/getRooms")
     public ResponseEntity<?> getRooms(@RequestParam String name) {
         if (buildingService.isBuildingExist(name)) {
@@ -36,6 +45,11 @@ public class BuildingController {
         return ResponseEntity.status(400).body("{\"error\":\"Building does not exists!\"}");
     }
 
+    /**
+     * API endpoint to add a building to the database
+     * @param name of the building to add
+     * @return response with a succes message or an error message if the building already exists
+     */
     @PostMapping("/addBuilding")
     public ResponseEntity<?> addBuilding(@RequestParam String name) {
         if (buildingService.addBuilding(name)) {
@@ -44,6 +58,11 @@ public class BuildingController {
         return ResponseEntity.status(200).body("{\"created\":\"" + name + "\"}");
     }
 
+    /**
+     * API endpoint to add a room to an existing building
+     * @param room Room object to be added to the database
+     * @return response with an error message if the room already exists or if the building the room needs to be added to already exists, or a succes message.
+     */
     @PostMapping("/addRoom")
     public ResponseEntity<?> addRoom(@RequestBody Room room) {
         if (buildingService.isBuildingExist(room.getBuilding().getName())) {
@@ -57,6 +76,11 @@ public class BuildingController {
         }
     }
 
+    /**
+     * API endpoint to delete a room
+     * @param roomName name of the room to be deleted
+     * @return response with a succes or error message
+     */
     @DeleteMapping("deleteRoom")
     public ResponseEntity<?> deleteRoom(@RequestParam String roomName) {
         if (buildingService.deleteRoom(roomName)) {
@@ -65,6 +89,11 @@ public class BuildingController {
         return ResponseEntity.status(400).body("{\"error\":\"room does not exist\"}");
     }
 
+    /**
+     * API endpoint to delete a building
+     * @param buildingName name of the building to be deleted
+     * @return response with a success or error message
+     */
     @DeleteMapping("deleteBuilding")
     public ResponseEntity<?> deleteBuilding(@RequestParam String buildingName) {
         if (buildingService.deleteBuilding(buildingName)) {
@@ -73,6 +102,12 @@ public class BuildingController {
         return ResponseEntity.status(400).body("{\"error\":\"building does not exist\"}");
     }
 
+    /**
+     * API endpoint to get a room from the database
+     * @param buildingName name of the building that contains the room
+     * @param roomName name of the room to be retrieved
+     * @return ResponseBody containing either an error message or a Room object.
+     */
     @PostMapping("/getRoom")
     public ResponseEntity<?> getRoom(@RequestParam String buildingName, @RequestParam String roomName) {
         if (buildingService.isBuildingExist(buildingName)) {
@@ -84,6 +119,9 @@ public class BuildingController {
         return ResponseEntity.status(400).body("{\"error\":\"building does not exist\"}");
     }
 
+    /**
+     * API endpoint to switch all rooms in all buildings to or from pandemic mode, halving or doubling their maximum occupancy.
+     */
     @GetMapping("/switchPandemicMode")
     public void switchPandemicMode() {
         buildingService.switchPandemicMode();

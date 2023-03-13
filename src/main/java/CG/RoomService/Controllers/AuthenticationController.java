@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 /**
  * RestController annotation is used to mark this class as a controller where every method returns a domain object instead of a view.
@@ -36,6 +37,11 @@ public class AuthenticationController {
     private final BookingService bookingService;
     private final UserService userService;
 
+    /**
+     * API endpoint for generating data suitable for testing, if they do not exist already
+     * creates 1 building, 2 rooms, 3 users.
+     * @return ResponseBody containing a message
+     */
     @GetMapping("/testData")
     public ResponseEntity<?> generateData() {
         Building building = new Building("test1");
@@ -58,27 +64,43 @@ public class AuthenticationController {
         return ResponseEntity.status(400).body("{\"Test data already exists\"}");
     }
 
+    /**
+     * API endpoint for generating bookings using previously created data
+     * only works if /testData has been called previously.
+     * Makes 6 bookings for later today and tomorrow
+     * @return ResponseBody containing a message
+     */
     @GetMapping("/testBooking")
     public ResponseEntity<?> GenerateBooking() {
         if (buildingService.isBuildingExist("test1")) {
-            User user1 = userService.findByEmail("test1@cg.nl").get();
-            User user2 = userService.findByEmail("test2@cg.nl").get();
-            User user3 = userService.findByEmail("test3@cg.nl").get();
-            Room room1 = buildingService.getRoom("test 1.1");
-            Room room2 = buildingService.getRoom("test 1.2");
-            Booking booking1 = new Booking(room1, OffsetDateTime.now().plusHours(1).truncatedTo(ChronoUnit.HOURS), user1);
-            bookingService.makeBooking(booking1);
-            Booking booking2 = new Booking(room1, OffsetDateTime.now().plusHours(3).truncatedTo(ChronoUnit.HOURS), user2);
-            bookingService.makeBooking(booking2);
-            Booking booking3 = new Booking(room2, OffsetDateTime.now().plusHours(1).truncatedTo(ChronoUnit.HOURS), user3);
-            bookingService.makeBooking(booking3);
-            Booking booking4 = new Booking(room2, OffsetDateTime.now().plusHours(3).truncatedTo(ChronoUnit.HOURS), user1);
-            bookingService.makeBooking(booking4);
-            Booking booking5 = new Booking(room2, OffsetDateTime.now().plusDays(1).plusHours(2).truncatedTo(ChronoUnit.HOURS), user2);
-            bookingService.makeBooking(booking5);
-            Booking booking6 = new Booking(room1, OffsetDateTime.now().plusDays(1).plusHours(4).truncatedTo(ChronoUnit.HOURS), user3);
-            bookingService.makeBooking(booking6);
-            return ResponseEntity.status(200).body("{\"test bookings generated\"}");
+            Optional<User> optionalUser1 =userService.findByEmail("test1@cg.nl");
+            Optional<User> optionalUser2 =userService.findByEmail("test2@cg.nl");
+            Optional<User> optionalUser3 =userService.findByEmail("test3@cg.nl");
+            if (optionalUser1.isPresent() && optionalUser2.isPresent() && optionalUser3.isPresent()) {
+                User user1 = optionalUser1.get();
+                User user2 = optionalUser2.get();
+                User user3 = optionalUser3.get();
+                Room room1 = buildingService.getRoom("test 1.1");
+                Room room2 = buildingService.getRoom("test 1.2");
+                Booking booking1 = new Booking(room1, OffsetDateTime.now().plusHours(1).truncatedTo(ChronoUnit.HOURS), user1);
+                bookingService.makeBooking(booking1);
+                Booking booking2 = new Booking(room1, OffsetDateTime.now().plusHours(3).truncatedTo(ChronoUnit.HOURS), user2);
+                bookingService.makeBooking(booking2);
+                Booking booking3 = new Booking(room2, OffsetDateTime.now().plusHours(1).truncatedTo(ChronoUnit.HOURS), user3);
+                bookingService.makeBooking(booking3);
+                Booking booking4 = new Booking(room2, OffsetDateTime.now().plusHours(3).truncatedTo(ChronoUnit.HOURS), user1);
+                bookingService.makeBooking(booking4);
+                Booking booking5 = new Booking(room2, OffsetDateTime.now().plusDays(1).plusHours(2).truncatedTo(ChronoUnit.HOURS), user2);
+                bookingService.makeBooking(booking5);
+                Booking booking6 = new Booking(room1, OffsetDateTime.now().plusDays(1).plusHours(4).truncatedTo(ChronoUnit.HOURS), user3);
+                bookingService.makeBooking(booking6);
+                return ResponseEntity.status(200).body("{\"test bookings generated\"}");
+            }
+            else {
+                bookingService.bookingCleanup();
+                buildingService.deleteBuilding("test1");
+                return ResponseEntity.status(400).body("{\"error\":\"something went wrong, test data reset, run /testData again\"}");
+            }
         }
         return ResponseEntity.status(400).body("{\"error\":\"Test date doesn't exist run /testData first\"}");
     }

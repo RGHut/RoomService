@@ -1,5 +1,6 @@
 package CG.RoomService.Service;
 
+import CG.RoomService.Models.Booking;
 import CG.RoomService.Models.Building;
 import CG.RoomService.Models.Room;
 import CG.RoomService.Repositories.BuildingRepository;
@@ -17,6 +18,8 @@ public class BuildingService {
     private final BuildingRepository buildingRepository;
 
     private final RoomRepository roomRepository;
+
+    private final BookingService bookingService;
 
     public ArrayList<Building> getBuildings() {
         return (ArrayList<Building>) buildingRepository.findAll();
@@ -63,7 +66,15 @@ public class BuildingService {
     public boolean deleteRoom(String name) {
         if(isRoomExist(name)) {
             Room room = roomRepository.findByName(name);
+            if (!room.getBookings().isEmpty()) {
+                for (Booking booking: room.getBookings()) {
+                    bookingService.cancelBooking(booking.getToken());
+                }
+            }
+            Building building = room.getBuilding();
+            building.removeRoom(room);
             roomRepository.delete(room);
+            buildingRepository.save(building);
             return true;
         }
         return false;
