@@ -116,7 +116,7 @@ function deleteBooking(bookingToken, name) {
 },
   
   error: function (xhr, status, error) {
-    console.log("Error: " + error);
+    console.log(xhr.responseText);
   }
   
 });
