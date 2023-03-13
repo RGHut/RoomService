@@ -42,7 +42,6 @@ public class BookingService {
             return false;
         }
         if (room.isBooked(booking.getTimeStart())) {
-
             return false;
         }
         User user = optionalUser.get();
