@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,12 +114,27 @@ public class Room {
 
     public boolean isBooked(OffsetDateTime time) {
         boolean booked = false;
+        // create a ZonedDateTime object for the date and time in the UTC time zone
+        ZonedDateTime utcDateTime = ZonedDateTime.parse(time.toString(), DateTimeFormatter.ISO_ZONED_DATE_TIME);
+
+// convert the date and time to the Central European Time zone
+        ZoneId cetZoneId = ZoneId.of("Europe/Paris"); // you can replace "Europe/Paris" with the appropriate time zone ID
+        ZonedDateTime cetDateTime = utcDateTime.withZoneSameInstant(cetZoneId);
+
+// format the date and time in the CET time zone
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+        String formattedDateTime = cetDateTime.format(formatter);
+        OffsetDateTime offsetDateTime = OffsetDateTime.parse(formattedDateTime);
+        System.out.println(offsetDateTime);
+
+
         for (Booking booking : bookings) {
-            if (time.isAfter(booking.getTimeStart()) && time.isBefore(booking.getTimeEnd())) {
+            System.out.println(booking.getTimeStart());
+            if (offsetDateTime.isAfter(booking.getTimeStart()) && offsetDateTime.isBefore(booking.getTimeEnd())) {
                 booked = true;
-            } else if (time.plusHours(1).isAfter(booking.getTimeStart()) && time.plusHours(1).isBefore(booking.getTimeEnd())) {
+            } else if (offsetDateTime.plusHours(1).isAfter(booking.getTimeStart()) && offsetDateTime.plusHours(1).isBefore(booking.getTimeEnd())) {
                 booked = true;
-            } else if (booking.getTimeStart().equals(time)) {
+            } else if (booking.getTimeStart().equals(offsetDateTime)) {
                 booked = true;
             }
         }
