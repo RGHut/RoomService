@@ -125,11 +125,11 @@ public class Room {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
         String formattedDateTime = cetDateTime.format(formatter);
         OffsetDateTime offsetDateTime = OffsetDateTime.parse(formattedDateTime);
-        System.out.println(offsetDateTime);
+
 
 
         for (Booking booking : bookings) {
-            System.out.println(booking.getTimeStart());
+
             if (offsetDateTime.isAfter(booking.getTimeStart()) && offsetDateTime.isBefore(booking.getTimeEnd())) {
                 booked = true;
             } else if (offsetDateTime.plusHours(1).isAfter(booking.getTimeStart()) && offsetDateTime.plusHours(1).isBefore(booking.getTimeEnd())) {

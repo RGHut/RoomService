@@ -92,8 +92,8 @@ function makeBooking(name, timeStart, timeEnd, email, calendar) {
     }, 
     
     error: function (xhr, status, error) {
-      console.log("Error: " + error);
-  }
+      console.log(xhr.responseText);
+  } 
   });
 }
 function deleteBooking(bookingToken, name) {
