@@ -1,6 +1,8 @@
-package CG.RoomService.Auth;
+package CG.RoomService.Service;
 
-import CG.RoomService.Service.JwtService;
+import CG.RoomService.Models.RegisterRequest;
+import CG.RoomService.Models.AuthenticationRequest;
+import CG.RoomService.Models.AuthenticationResponse;
 import CG.RoomService.Models.Role;
 import CG.RoomService.Models.User;
 import CG.RoomService.Repositories.UserRepository;

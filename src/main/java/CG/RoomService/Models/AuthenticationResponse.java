@@ -1,4 +1,4 @@
-package CG.RoomService.Auth;
+package CG.RoomService.Models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

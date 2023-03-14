@@ -1,6 +1,9 @@
 package CG.RoomService.Config;
 
+import CG.RoomService.Models.AuthenticationResponse;
 import CG.RoomService.Service.JwtService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +26,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     // JwtService instance to perform JWT related operations
     private final JwtService jwtService;
     // UserDetailsService instance to load user by username
@@ -35,6 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // Overriding the doFilterInternal method from OncePerRequestFilter
     @Override
+
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
@@ -46,6 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         // String variable to hold the user email
         final String userEmail;
+        try{
         // Check if the auth header is null or doesn't start with the expected prefix
         if (authHeader == null || !authHeader.startsWith(TOKEN_PREFIX)) {
             // If true, continue with the filter chain
@@ -78,5 +85,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         // continue with the filter chain
         filterChain.doFilter(request, response);
-    }
+    }catch(ExpiredJwtException ex){
+            AuthenticationResponse authenticationResponse = new AuthenticationResponse(null,ex.toString());
+
+            // Set the response status code to 401
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+
+            // Set the response content type to application/json
+            response.setContentType("application/json");
+
+            // Write the authenticationResponse object as a JSON string to the response body
+            response.getWriter().write(new ObjectMapper().writeValueAsString(authenticationResponse));
+
+            // End the filter chain
+            return;
+
+        }
+}
 }

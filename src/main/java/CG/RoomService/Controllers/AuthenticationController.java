@@ -1,9 +1,9 @@
 package CG.RoomService.Controllers;
 
-import CG.RoomService.Auth.AuthenticationRequest;
-import CG.RoomService.Auth.AuthenticationResponse;
-import CG.RoomService.Auth.AuthenticationService;
-import CG.RoomService.Auth.RegisterRequest;
+import CG.RoomService.Models.AuthenticationRequest;
+import CG.RoomService.Models.AuthenticationResponse;
+import CG.RoomService.Service.AuthenticationService;
+import CG.RoomService.Models.RegisterRequest;
 import CG.RoomService.Models.Booking;
 import CG.RoomService.Models.Building;
 import CG.RoomService.Models.Room;
@@ -14,9 +14,7 @@ import CG.RoomService.Service.BuildingService;
 import CG.RoomService.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
