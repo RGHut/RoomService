@@ -17,4 +17,5 @@ public class AuthenticationResponse {
      * JWT-token
      */
     private String token;
+    private String error;
 }

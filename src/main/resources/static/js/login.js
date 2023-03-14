@@ -21,7 +21,8 @@ $(document).ready(function () {
                 window.location.href = "../static/home.html";
             },
             error: function (xhr, status, error) {
-                console.log("Error: " + error);
+                
+                console.log("Error: " + xhr.responseJSON.error );
             }
         });
     });

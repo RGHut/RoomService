@@ -13,7 +13,10 @@ import CG.RoomService.Service.BookingService;
 import CG.RoomService.Service.BuildingService;
 import CG.RoomService.Service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
@@ -146,7 +149,13 @@ public class AuthenticationController {
             @RequestParam String password
     ) {
         AuthenticationRequest request = new AuthenticationRequest(email, password);
-        return ResponseEntity.ok(service.authenticate(request));
+        try {
+            AuthenticationResponse response = service.authenticate(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthenticationResponse(null,"Invalid email and password combination"));
+
+    }
     }
     @GetMapping("/user")
     public ResponseEntity<String> sayHello() {
