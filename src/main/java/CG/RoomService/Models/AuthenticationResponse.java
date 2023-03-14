@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
+public class AuthenticationResponse extends Response{
     /**
      * JWT-token
      */
     private String token;
-    private String error;
+
 }

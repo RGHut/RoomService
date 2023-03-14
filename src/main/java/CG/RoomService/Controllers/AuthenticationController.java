@@ -1,13 +1,7 @@
 package CG.RoomService.Controllers;
 
-import CG.RoomService.Models.AuthenticationRequest;
-import CG.RoomService.Models.AuthenticationResponse;
+import CG.RoomService.Models.*;
 import CG.RoomService.Service.AuthenticationService;
-import CG.RoomService.Models.RegisterRequest;
-import CG.RoomService.Models.Booking;
-import CG.RoomService.Models.Building;
-import CG.RoomService.Models.Room;
-import CG.RoomService.Models.User;
 import CG.RoomService.Repositories.RoomRepository;
 import CG.RoomService.Service.BookingService;
 import CG.RoomService.Service.BuildingService;
@@ -142,7 +136,7 @@ public class AuthenticationController {
      * @return a ResponseEntity with an AuthenticationResponse object
      */
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
+    public ResponseEntity<Response> authenticate(
             @RequestParam String email,
             @RequestParam String password
     ) {
@@ -151,7 +145,7 @@ public class AuthenticationController {
             AuthenticationResponse response = service.authenticate(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthenticationResponse(null,"Invalid email and password combination"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ExceptionResponse("Invalid email and password combination"));
 
     }
     }

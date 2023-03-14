@@ -1,6 +1,7 @@
 package CG.RoomService.Config;
 
 import CG.RoomService.Models.AuthenticationResponse;
+import CG.RoomService.Models.ExceptionResponse;
 import CG.RoomService.Service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -86,7 +87,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // continue with the filter chain
         filterChain.doFilter(request, response);
     }catch(ExpiredJwtException ex){
-            AuthenticationResponse authenticationResponse = new AuthenticationResponse(null,ex.toString());
+            ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getMessage());
 
             // Set the response status code to 401
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -95,7 +96,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setContentType("application/json");
 
             // Write the authenticationResponse object as a JSON string to the response body
-            response.getWriter().write(new ObjectMapper().writeValueAsString(authenticationResponse));
+            response.getWriter().write(new ObjectMapper().writeValueAsString(exceptionResponse));
 
             // End the filter chain
             return;
