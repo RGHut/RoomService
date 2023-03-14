@@ -1,4 +1,4 @@
-const token = localStorage.getItem("jwtToken")
+localStorage.getItem("jwtToken")
 
 function getRooms (name){
     
@@ -9,7 +9,7 @@ function getRooms (name){
     name:name
   },
   beforeSend: function (xhr) {
-    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("jwtToken"));
   },
   success: function (data) {
     // Do something with the booking data, e.g. create calendar events
@@ -30,7 +30,7 @@ function getBooking (){
     type: "GET",
     dataType: 'text',
     beforeSend: function (xhr) {
-      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+      xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("jwtToken"));
     },
     success: function (data) {
       // Do something with the booking data, e.g. create calendar events
@@ -44,6 +44,7 @@ function getBooking (){
 
 function getBookingByRoom (roomName){
   
+  
   $.ajax({
   url: "http://localhost:8080/getBookingByRoom",
   type: "POST",
@@ -51,7 +52,7 @@ function getBookingByRoom (roomName){
     roomName:roomName
   },
   beforeSend: function (xhr) {
-    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("jwtToken"));
   },
 
   success: function (data) {
@@ -67,11 +68,12 @@ function getBookingByRoom (roomName){
 }
 
 function makeBooking(name, timeStart, timeEnd, email, calendar) {
+  checkTokenExpiration(localStorage.getItem("jwtToken"))
   $.ajax({
     url: "http://localhost:8080/makeBooking",
     type: "POST",
     beforeSend: function(xhr) {
-      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+      xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("jwtToken"));
     },
     headers: {
       'Content-Type': 'application/json'
@@ -97,14 +99,16 @@ function makeBooking(name, timeStart, timeEnd, email, calendar) {
   });
 }
 function deleteBooking(bookingToken, name) {
+  checkTokenExpiration(localStorage.getItem("jwtToken"))
   $.ajax({
   url: "http://localhost:8080/cancelBooking",
   type: "POST",
   beforeSend: function(xhr) {
-    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("jwtToken"));
   },
    
   data: {
+    
     token : bookingToken
   },
     

@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 backgroundColor: '#008000',
                 borderColor: '#008000',
                 textColor: '#fff',
-                editable: true,
+                editable: false,
               });
             }
           }
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
               backgroundColor:  '#FF0000',
               borderColor: '#FF0000',
               textColor: '#fff',
-              editable: true,
+              editable: false,
               allDay: false
             };
             events.push(event);
