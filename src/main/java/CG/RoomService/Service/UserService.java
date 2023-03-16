@@ -1,8 +1,10 @@
 package CG.RoomService.Service;
 
 
+import CG.RoomService.Models.Booking;
 import CG.RoomService.Models.Role;
 import CG.RoomService.Models.User;
+import CG.RoomService.Repositories.BookingRepository;
 import CG.RoomService.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final BookingService bookingService;
+
     public User create(User user) {
         return userRepository.save(user);
     }
@@ -24,6 +28,12 @@ public class UserService {
     }
 
     public void delete(int id) {
+        User user = userRepository.findById(id).get();
+        if (!user.getBookings().isEmpty()) {
+            for (Booking booking: user.getBookings()) {
+                bookingService.cancelBooking(booking.getUser().getEmail(), booking.getToken());
+            }
+        }
         userRepository.deleteById(id);
     }
 

@@ -9,8 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.time.LocalDateTime;
-
+import java.time.OffsetDateTime;
 import java.util.List;
 
 
@@ -35,8 +34,8 @@ public class BookingController {
      * @return List<Booking> list of all bookings
      */
     @GetMapping("/bookings")
-    public List<Booking> getBookings() {
-        return bookingService.getBookings();
+    public ResponseEntity<List<Booking>> getBookings() {
+        return ResponseEntity.status(200).body(bookingService.getBookings());
 //        return bookings;
     }
     /**
@@ -56,11 +55,12 @@ public class BookingController {
      * Cancels a booking with the given token
      *
      * @param token - The unique token for the booking
+     * @param email - the email of the user attempting to delete the booking
      * @return - HTTP response with a success or error message
      */
     @PostMapping("/cancelBooking")
-    public ResponseEntity<?> cancelBooking(@RequestParam String token) {
-        if (bookingService.cancelBooking(token)) {
+    public ResponseEntity<?> cancelBooking(@RequestParam String token, @RequestParam String email) {
+        if (bookingService.cancelBooking(email, token)) {
             return ResponseEntity.status(200).body("{\"booking removed\"}");
         }
         return ResponseEntity.status(400).body("{\"error\": \"booking does not exist!\"}");
@@ -74,7 +74,7 @@ public class BookingController {
      * @return A response indicating whether the booking was changed successfully or not
      */
     @PostMapping("/changeBooking")
-    public ResponseEntity<?> changeBooking(@RequestParam String token, @RequestParam LocalDateTime time) {
+    public ResponseEntity<?> changeBooking(@RequestParam String token, @RequestParam OffsetDateTime time) {
         if (bookingService.isBookingExist(token)) {
             if (bookingService.changeBooking(token, time)) {
                 return ResponseEntity.status(200).body("{\"booking changed to " + time + "\"}");
@@ -99,6 +99,36 @@ public class BookingController {
         return ResponseEntity.status(400).body("{\"error\":\"booking does not exist\"}");
     }
 
+    /**
+     * retrieves a list of bookings belonging to a specific user
+     * @param userEmail email of the User to retrieve the bookings for
+     * @return ResponseBody containing either the retrieved bookings or an error message if the user does not exist
+     */
+    @PostMapping("/getBookingByUser")
+    public ResponseEntity<?> getBookingByUser(@RequestParam String userEmail) {
+        if (bookingService.isUserExistByEmail(userEmail)) {
+            return ResponseEntity.status(200).body(bookingService.getBookingsByUser(userEmail));
+        }
+        return ResponseEntity.status(400).body("{\"error\":\"User with Email '" + userEmail + "' does not exist\"}");
+    }
+
+    /**
+     * retrieves a list of bookings belonging to a specific room
+     * @param roomName name of the room to retrieve the bookings for
+     * @return ResponseBody containing a list of bookings or an error message if the room does not exist
+     */
+    @PostMapping("/getBookingByRoom")
+    public ResponseEntity<?> getBookingsByRoom(@RequestParam String roomName) {
+        if (bookingService.isRoomExistByName(roomName)) {
+            return ResponseEntity.status(200).body(bookingService.getBookingsByRoom(roomName));
+        }
+        return ResponseEntity.status(400).body("{\"error\":\"Room does not exist\"}");
+    }
+
+    /**
+     * deletes all bookings from the database that have an end time that has already passed
+     * @return a ResponseBody containing a message if the process was successful or not.
+     */
     @DeleteMapping("/cleanBookings")
     public ResponseEntity<?> cleanBookings() {
         if (bookingService.bookingCleanup()) {

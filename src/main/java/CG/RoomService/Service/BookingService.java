@@ -10,11 +10,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+
+import java.time.OffsetDateTime;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -53,22 +53,27 @@ public class BookingService {
         return true;
     }
 
-    public boolean cancelBooking(String token) {
+    public boolean cancelBooking(String email, String token) {
         if (bookingRepository.existsBookingByToken(token)) {
             Booking booking = bookingRepository.findByToken(token);
-            bookingRepository.deleteById(booking.getId());
-            Room room = booking.getRoom();
-            room.cancelBooking(booking);
-            User user = booking.getUser();
-            user.cancelBooking(booking);
-            roomRepository.save(room);
-            userRepository.save(user);
-            return true;
+            System.out.println(email);
+            System.out.println(booking.getUserEmail());
+            if (booking.getUserEmail().equals(email)) {
+                bookingRepository.deleteById(booking.getId());
+                Room room = booking.getRoom();
+                room.cancelBooking(booking);
+                User user = booking.getUser();
+                user.cancelBooking(booking);
+                roomRepository.save(room);
+                userRepository.save(user);
+                return true;
+            }
+            return false;
         }
         return false;
     }
 
-    public boolean changeBooking(String token, LocalDateTime time) {
+    public boolean changeBooking(String token, OffsetDateTime time) {
         Booking booking = bookingRepository.findByToken(token);
         if (booking.getRoom().isBooked(time)){
             return false;
@@ -83,12 +88,31 @@ public class BookingService {
         return bookingRepository.existsBookingByToken(token);
     }
 
+    public boolean isUserExistByEmail(String email) {
+        return userRepository.existsUserByEmail(email);
+    }
+
+    public boolean isRoomExistByName(String name) {
+        return roomRepository.existsRoomByName(name);
+    }
+
+    public List<Booking> getBookingsByUser(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        User user = optionalUser.get();
+        return (bookingRepository.findByUser(user));
+    }
+
+    public List<Booking> getBookingsByRoom(String roomName) {
+        Room room = roomRepository.findByName(roomName);
+        return (bookingRepository.findByRoom(room));
+    }
+
     public boolean bookingCleanup() {
-        LocalDateTime current = LocalDateTime.now();
+        OffsetDateTime current = OffsetDateTime.now();
         List<Booking> bookingList = getBookings();
         for (Booking booking: bookingList) {
             if (booking.getTimeEnd().isBefore(current)) {
-                if (!cancelBooking(booking.getToken())) {
+                if (!cancelBooking(booking.getUser().getEmail(), booking.getToken())) {
                     return false;
                 }
             }

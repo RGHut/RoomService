@@ -1,5 +1,6 @@
 package CG.RoomService.Service;
 
+import CG.RoomService.Models.Booking;
 import CG.RoomService.Models.Building;
 import CG.RoomService.Models.Room;
 import CG.RoomService.Repositories.BuildingRepository;
@@ -17,6 +18,8 @@ public class BuildingService {
     private final BuildingRepository buildingRepository;
 
     private final RoomRepository roomRepository;
+
+    private final BookingService bookingService;
 
     public ArrayList<Building> getBuildings() {
         return (ArrayList<Building>) buildingRepository.findAll();
@@ -52,9 +55,26 @@ public class BuildingService {
         if(isBuildingExist(name)) {
             Building building = buildingRepository.findByName(name);
             for (Room room: building.getRooms()) {
-                deleteRoom(room.getName());
+                deleteRoomHard(room.getName());
             }
             buildingRepository.delete(building);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deleteRoomHard(String name) {
+        if(isRoomExist(name)) {
+            Room room = roomRepository.findByName(name);
+            if (!room.getBookings().isEmpty()) {
+                for (Booking booking: room.getBookings()) {
+                    bookingService.cancelBooking(booking.getUser().getEmail(), booking.getToken());
+                }
+            }
+            Building building = room.getBuilding();
+            building.removeRoom(room);
+            roomRepository.delete(room);
+            buildingRepository.save(building);
             return true;
         }
         return false;
@@ -63,8 +83,9 @@ public class BuildingService {
     public boolean deleteRoom(String name) {
         if(isRoomExist(name)) {
             Room room = roomRepository.findByName(name);
-            roomRepository.delete(room);
-            return true;
+            if (room.getBookings().isEmpty()) {
+                return deleteRoomHard(name);
+            }
         }
         return false;
     }
@@ -82,6 +103,11 @@ public class BuildingService {
             room.switchPandemicMode();
             roomRepository.save(room);
         }
+    }
+
+    public List<Room> getRoomsByBuilding(String buildingName) {
+        Building building = buildingRepository.findByName(buildingName);
+        return roomRepository.findByBuilding(building);
     }
 
     public Room getRoom(String name) {

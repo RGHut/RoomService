@@ -1,28 +1,41 @@
 function logout() {
     localStorage.removeItem("jwtToken");
-    window.location.href = "/src/main/resources/static/index.html";
+    window.location.href = "../static/index.html";
 }
 
 if (localStorage.getItem("jwtToken")) {
-    const token = localStorage.getItem("jwtToken")
-
-    $.ajax({
-        url: "http://localhost:8080/bookings",
-        type: "GET",
-        dataType: 'text',
-
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-        },
-        success: function (data) {
-            console.log('Response data:', data);
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.error('Error:', textStatus, errorThrown);
-        }
-    });
-
+    checkTokenExpiration(localStorage.getItem("jwtToken"));
     $('#logoutButton').click(logout);
 } else {
-    window.location.href = "/src/main/resources/static/index.html";
+    window.location.href = "../static/index.html";
 }
+
+function checkTokenExpiration(token) {
+    if (!token) {
+      // Token not found in local storage
+      return;
+    }
+  
+    const tokenData = JSON.parse(atob(token.split('.')[1]));
+    const expirationTime = tokenData.exp * 1000; // Convert expiration time from seconds to milliseconds
+    const currentTime = Date.now();
+    const timeDifference = expirationTime - currentTime;
+  
+    if (timeDifference <= 0) {
+      // Token has expired, remove from local storage
+      localStorage.removeItem('jwtToken');
+      window.location.href = "../static/index.html";
+
+    }
+  }
+
+  function checkTokenUser(token){
+    if(!token) {
+    return;
+    }
+    const tokenData = JSON.parse(atob(token.split('.')[1]));
+    const userEmail = tokenData.sub; // Convert expiration time from seconds to milliseconds
+    return userEmail;
+  
+
+  }
