@@ -55,6 +55,7 @@ public class BookingController {
      * Cancels a booking with the given token
      *
      * @param token - The unique token for the booking
+     * @param email - the email of the user attempting to delete the booking
      * @return - HTTP response with a success or error message
      */
     @PostMapping("/cancelBooking")
