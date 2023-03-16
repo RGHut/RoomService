@@ -3,6 +3,7 @@ package CG.RoomService.Controllers;
 import CG.RoomService.Models.Building;
 import CG.RoomService.Models.Room;
 
+import CG.RoomService.Service.BookingService;
 import CG.RoomService.Service.BuildingService;
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 public class BuildingController {
 
     private final BuildingService buildingService;
+
+    private final BookingService bookingService;
 
 
     /**
@@ -77,13 +80,28 @@ public class BuildingController {
     }
 
     /**
-     * API endpoint to delete a room
+     * API endpoint to delete a room if it has no bookings
      * @param roomName name of the room to be deleted
      * @return response with a succes or error message
      */
     @DeleteMapping("deleteRoom")
     public ResponseEntity<?> deleteRoom(@RequestParam String roomName) {
+        bookingService.bookingCleanup();
         if (buildingService.deleteRoom(roomName)) {
+            return ResponseEntity.status(200).body("{\"Deleted\":\"" + roomName + "\"}");
+        }
+        return ResponseEntity.status(400).body("{\"error\":\"room does not exist\"}");
+    }
+
+    /**
+     * API endpoint to delete a room even if it has bookings
+     * @param roomName name of the room to be deleted
+     * @return response with a succes or error message
+     */
+    @DeleteMapping("deleteRoomHard")
+    public ResponseEntity<?> deleteRoomHard(@RequestParam String roomName) {
+        bookingService.bookingCleanup();
+        if (buildingService.deleteRoomHard(roomName)) {
             return ResponseEntity.status(200).body("{\"Deleted\":\"" + roomName + "\"}");
         }
         return ResponseEntity.status(400).body("{\"error\":\"room does not exist\"}");
@@ -96,6 +114,7 @@ public class BuildingController {
      */
     @DeleteMapping("deleteBuilding")
     public ResponseEntity<?> deleteBuilding(@RequestParam String buildingName) {
+        bookingService.bookingCleanup();
         if (buildingService.deleteBuilding(buildingName)) {
             return ResponseEntity.status(200).body("{\"Deleted\":\"" + buildingName + " and all its rooms\"}");
         }
