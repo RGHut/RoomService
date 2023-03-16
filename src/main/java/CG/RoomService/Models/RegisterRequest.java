@@ -17,11 +17,11 @@ public class RegisterRequest {
     /**
      * User's first name
      */
-    private String firstname;
+    private String firstName;
     /**
      * User's last name
      */
-    private String lastname;
+    private String lastName;
     /**
      * User's email address
      */

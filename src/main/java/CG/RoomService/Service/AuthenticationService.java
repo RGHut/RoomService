@@ -35,8 +35,8 @@ public class AuthenticationService {
      */
     public AuthenticationResponse register(RegisterRequest request) {
         var user = User.builder()
-                .firstname(request.getFirstname())
-                .lastname(request.getLastname())
+                .firstname(request.getFirstName())
+                .lastname(request.getLastName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .company(request.getCompany())
@@ -55,20 +55,7 @@ public class AuthenticationService {
      * @param request AuthenticationRequest object containing user email and password
      * @return AuthenticationResponse object containing JWT token
      */
-//    public AuthenticationResponse authenticate(AuthenticationRequest request) {
-//        authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(
-//                        request.getEmail(),
-//                        request.getPassword()
-//                )
-//        );
-//        var user = repository.findByEmail(request.getEmail())
-//                .orElseThrow();
-//        var jwtToken = jwtService.generateToken(user);
-//        return AuthenticationResponse.builder()
-//                .token(jwtToken)
-//                .build();
-//    }
+
 
     /**
      * List all users
@@ -96,12 +83,6 @@ public class AuthenticationService {
                 .token(jwtToken)
                 .build();
 
-
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//
-//        HttpEntity<AuthenticationResponse> entity = new HttpEntity<>(response, headers);
-//        restTemplate.postForEntity("http://127.0.0.1:5500/", entity, Void.class);
         return response;
     }
 }

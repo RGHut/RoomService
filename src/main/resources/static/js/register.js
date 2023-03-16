@@ -2,14 +2,14 @@ $(document).ready(function () {
     $("#register-form").submit(function (e) {
         e.preventDefault();
 
-        var firstName = $("firstName").val();
-        var lastName = $("lastName").val();
+        var firstName = $("#firstName").val();
+        var lastName = $("#lastName").val();
         var email = $("#email").val();
         var password = $("#password").val();
-        var company = $("company").val();
-
+        var company = $("#company").val();
+console.log(firstName,lastName)
         $.ajax({
-            url: "http://localhost:8080/test/authenticate",
+            url: "http://localhost:8080/test/register",
             type: "POST",
             headers: {
                 'Content-Type': 'application/json'
