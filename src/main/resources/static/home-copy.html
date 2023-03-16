@@ -1,6 +1,6 @@
 <!DOCTYPE html><!--  This site was created in Webflow. https://www.webflow.com  -->
 <!--  Last Published: Thu Mar 16 2023 13:06:31 GMT+0000 (Coordinated Universal Time)  -->
-<html data-wf-page="63eb9acfbb5d8349b9c43d52" data-wf-site="63eb9acfbb5d83b1bbc43d51">
+<html data-wf-page="6411a00856d35f682179d4b0" data-wf-site="63eb9acfbb5d83b1bbc43d51">
 <head>
   <meta charset="utf-8">
   <title>RoomserviceApp</title>
@@ -19,6 +19,37 @@
   <link href="images/webclip.png" rel="apple-touch-icon">
 </head>
 <body>
+  <div class="black-bg">
+    <div class="popup_box"><img src="images/logo_login.png" loading="lazy" alt="" class="codegorilla-logo">
+      <h2 class="registratie">Registratie</h2>
+      <div class="w-form">
+        <form name="email-form" data-name="Email Form" method="get" id="email-form" class="registrate_form">
+          <div class="credentials-text">first name</div><input type="text" class="credentials_box w-input" maxlength="256" name="firstName" data-name="firstName" placeholder="" id="firstName" required="">
+          <div class="credentials-text">last name</div><input type="text" class="credentials_box w-input" maxlength="256" name="lastName" data-name="lastName" placeholder="" id="lastName" required="">
+          <div class="credentials-text">email</div><input type="email" class="credentials_box w-input" maxlength="256" name="email" data-name="email" placeholder="" id="email-4" required="">
+          <div class="credentials-text">password</div><input type="password" class="credentials_box w-input" maxlength="256" name="password" data-name="password" placeholder="" id="password-3" required="">
+          <div data-hover="false" data-delay="0" class="w-dropdown">
+            <div class="company w-dropdown-toggle">
+              <div class="w-icon-dropdown-toggle"></div>
+              <div>Company</div>
+            </div>
+            <nav class="w-dropdown-list">
+              <a href="#" class="w-dropdown-link">CodeGorilla</a>
+              <a href="#" class="w-dropdown-link">Alyx</a>
+              <a href="#" class="w-dropdown-link">Link 3</a>
+            </nav>
+          </div><input type="submit" value="Aanmaken" data-wait="Please wait..." class="submit_button w-button">
+        </form>
+        <div class="w-form-done">
+          <div>Thank you! Your submission has been received!</div>
+        </div>
+        <div class="w-form-fail">
+          <div>Oops! Something went wrong while submitting the form.</div>
+        </div>
+      </div>
+      <a href="#" class="exit_button w-button">X</a>
+    </div>
+  </div>
   <div class="background wf-section">
     <div class="logo w-container">
       <div class="div-block"><img src="images/logo_login.png" loading="lazy" alt="" class="codegorilla_logo"></div>
