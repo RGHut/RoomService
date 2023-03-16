@@ -134,8 +134,7 @@ public class AuthenticationController {
     @PostMapping("/authenticate")
     public ResponseEntity<Response> authenticate(@RequestBody AuthenticationRequest request ){
              try {
-            AuthenticationResponse response = service.authenticate(request);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(service.authenticate(request));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ExceptionResponse("Invalid email and password combination"));
 
