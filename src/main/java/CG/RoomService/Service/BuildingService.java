@@ -55,7 +55,7 @@ public class BuildingService {
         if(isBuildingExist(name)) {
             Building building = buildingRepository.findByName(name);
             for (Room room: building.getRooms()) {
-                deleteRoom(room.getName());
+                deleteRoomHard(room.getName());
             }
             buildingRepository.delete(building);
             return true;
@@ -63,7 +63,7 @@ public class BuildingService {
         return false;
     }
 
-    public boolean deleteRoom(String name) {
+    public boolean deleteRoomHard(String name) {
         if(isRoomExist(name)) {
             Room room = roomRepository.findByName(name);
             if (!room.getBookings().isEmpty()) {
@@ -76,6 +76,16 @@ public class BuildingService {
             roomRepository.delete(room);
             buildingRepository.save(building);
             return true;
+        }
+        return false;
+    }
+
+    public boolean deleteRoom(String name) {
+        if(isRoomExist(name)) {
+            Room room = roomRepository.findByName(name);
+            if (room.getBookings().isEmpty()) {
+                return deleteRoomHard(name);
+            }
         }
         return false;
     }
