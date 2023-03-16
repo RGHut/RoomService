@@ -58,8 +58,8 @@ public class BookingController {
      * @return - HTTP response with a success or error message
      */
     @PostMapping("/cancelBooking")
-    public ResponseEntity<?> cancelBooking(@RequestParam String token) {
-        if (bookingService.cancelBooking(token)) {
+    public ResponseEntity<?> cancelBooking(@RequestParam String token, @RequestParam String email) {
+        if (bookingService.cancelBooking(email, token)) {
             return ResponseEntity.status(200).body("{\"booking removed\"}");
         }
         return ResponseEntity.status(400).body("{\"error\": \"booking does not exist!\"}");

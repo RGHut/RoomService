@@ -85,6 +85,7 @@ function makeBooking(name, timeStart, timeEnd, email, calendar) {
       },
       "timeStart": timeStart,
       "timeEnd": timeEnd,
+      "userEmail":email,
       "user": {
         "email": email
       }
@@ -98,7 +99,7 @@ function makeBooking(name, timeStart, timeEnd, email, calendar) {
   } 
   });
 }
-function deleteBooking(bookingToken, name) {
+function deleteBooking(bookingToken, roomName, userEmail) {
   checkTokenExpiration(localStorage.getItem("jwtToken"))
   $.ajax({
   url: "http://localhost:8080/cancelBooking",
@@ -108,19 +109,20 @@ function deleteBooking(bookingToken, name) {
   },
    
   data: {
-    
+    email: userEmail,
     token : bookingToken
   },
-    
+  
       
   success:function (data) {
         
-    getBookingByRoom(name)
+    getBookingByRoom(roomName)
   
 },
   
   error: function (xhr, status, error) {
     console.log(xhr.responseText);
+    
   }
   
 });

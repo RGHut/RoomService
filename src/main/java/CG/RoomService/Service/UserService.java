@@ -31,7 +31,7 @@ public class UserService {
         User user = userRepository.findById(id).get();
         if (!user.getBookings().isEmpty()) {
             for (Booking booking: user.getBookings()) {
-                bookingService.cancelBooking(booking.getToken());
+                bookingService.cancelBooking(booking.getUser().getEmail(), booking.getToken());
             }
         }
         userRepository.deleteById(id);

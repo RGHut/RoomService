@@ -28,3 +28,14 @@ function checkTokenExpiration(token) {
 
     }
   }
+
+  function checkTokenUser(token){
+    if(!token) {
+    return;
+    }
+    const tokenData = JSON.parse(atob(token.split('.')[1]));
+    const userEmail = tokenData.sub; // Convert expiration time from seconds to milliseconds
+    return userEmail;
+  
+
+  }

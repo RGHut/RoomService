@@ -53,17 +53,22 @@ public class BookingService {
         return true;
     }
 
-    public boolean cancelBooking(String token) {
+    public boolean cancelBooking(String email, String token) {
         if (bookingRepository.existsBookingByToken(token)) {
             Booking booking = bookingRepository.findByToken(token);
-            bookingRepository.deleteById(booking.getId());
-            Room room = booking.getRoom();
-            room.cancelBooking(booking);
-            User user = booking.getUser();
-            user.cancelBooking(booking);
-            roomRepository.save(room);
-            userRepository.save(user);
-            return true;
+            System.out.println(email);
+            System.out.println(booking.getUserEmail());
+            if (booking.getUserEmail().equals(email)) {
+                bookingRepository.deleteById(booking.getId());
+                Room room = booking.getRoom();
+                room.cancelBooking(booking);
+                User user = booking.getUser();
+                user.cancelBooking(booking);
+                roomRepository.save(room);
+                userRepository.save(user);
+                return true;
+            }
+            return false;
         }
         return false;
     }
@@ -107,7 +112,7 @@ public class BookingService {
         List<Booking> bookingList = getBookings();
         for (Booking booking: bookingList) {
             if (booking.getTimeEnd().isBefore(current)) {
-                if (!cancelBooking(booking.getToken())) {
+                if (!cancelBooking(booking.getUser().getEmail(), booking.getToken())) {
                     return false;
                 }
             }

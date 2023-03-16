@@ -68,7 +68,7 @@ public class BuildingService {
             Room room = roomRepository.findByName(name);
             if (!room.getBookings().isEmpty()) {
                 for (Booking booking: room.getBookings()) {
-                    bookingService.cancelBooking(booking.getToken());
+                    bookingService.cancelBooking(booking.getUser().getEmail(), booking.getToken());
                 }
             }
             Building building = room.getBuilding();

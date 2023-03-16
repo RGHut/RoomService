@@ -30,7 +30,7 @@ public class Booking {
     @JsonBackReference(value = "user")
     private User user;
 
-    @Column(name = "userEmail")
+    @Column(name = "reserved_by")
     private String userEmail;
 
     public Booking() {

@@ -11,13 +11,16 @@ $(document).ready(function () {
         $.ajax({
             url: "http://localhost:8080/test/authenticate",
             type: "POST",
-            data: {
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            data: JSON.stringify({
                 firstName: firstName,
                 lastName: lastName,
                 email: email,
                 password: password,
-                company: company,
-            },
+                company: company
+            }),
             success: function (data) {
                 var token = data.token;
                 

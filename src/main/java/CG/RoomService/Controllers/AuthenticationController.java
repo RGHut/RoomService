@@ -115,16 +115,12 @@ public class AuthenticationController {
      * @return a ResponseEntity with an AuthenticationResponse object
      */
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
-            @RequestParam String firstName,
-            @RequestParam String lastName,
-            @RequestParam String company,
-            @RequestParam String email,
-            @RequestParam String password
-
-    ) {
-        RegisterRequest request = new RegisterRequest(firstName, lastName, email, password, company);
-        return ResponseEntity.ok(service.register(request));
+    public ResponseEntity<Response> register(@RequestBody RegisterRequest registerRequest) {
+        try {
+            return ResponseEntity.ok(service.register(registerRequest));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ExceptionResponse("Missing necessary information"));
+        }
     }
 
     /**
@@ -136,12 +132,8 @@ public class AuthenticationController {
      * @return a ResponseEntity with an AuthenticationResponse object
      */
     @PostMapping("/authenticate")
-    public ResponseEntity<Response> authenticate(
-            @RequestParam String email,
-            @RequestParam String password
-    ) {
-        AuthenticationRequest request = new AuthenticationRequest(email, password);
-        try {
+    public ResponseEntity<Response> authenticate(@RequestBody AuthenticationRequest request ){
+             try {
             AuthenticationResponse response = service.authenticate(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
