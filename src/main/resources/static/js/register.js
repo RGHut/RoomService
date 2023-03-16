@@ -30,6 +30,9 @@ $(document).ready(function () {
                 window.location.href = "../static/home.html";
             },
             error: function (xhr, status, error) {
+                const errorMessage = "Error: " + xhr.responseJSON.error;
+                const errorElement = document.querySelector(".w-form-fail > div");
+                errorElement.textContent = errorMessage;
                 
                 console.log("Error: " + xhr.responseJSON.error );
             }
