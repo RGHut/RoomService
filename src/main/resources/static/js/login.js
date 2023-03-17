@@ -6,7 +6,7 @@ $(document).ready(function () {
         var password = $("#password").val();
 
         $.ajax({
-            url: "http://localhost:8080/test/authenticate",
+            url: BASE_URL + "/test/authenticate",
             type: "POST",
             headers: {
                 'Content-Type': 'application/json'

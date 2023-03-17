@@ -9,7 +9,7 @@ $(document).ready(function () {
         var company = $("#company").val();
 console.log(firstName,lastName)
         $.ajax({
-            url: "http://localhost:8080/test/register",
+            url: BASE_URL + "/test/register",
             type: "POST",
             headers: {
                 'Content-Type': 'application/json'
