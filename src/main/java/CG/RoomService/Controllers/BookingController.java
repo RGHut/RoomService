@@ -55,11 +55,12 @@ public class BookingController {
      * Cancels a booking with the given token
      *
      * @param token - The unique token for the booking
+     * @param email - the email of the user attempting to delete the booking
      * @return - HTTP response with a success or error message
      */
     @PostMapping("/cancelBooking")
-    public ResponseEntity<?> cancelBooking(@RequestParam String token) {
-        if (bookingService.cancelBooking(token)) {
+    public ResponseEntity<?> cancelBooking(@RequestParam String token, @RequestParam String email) {
+        if (bookingService.cancelBooking(email, token)) {
             return ResponseEntity.status(200).body("{\"booking removed\"}");
         }
         return ResponseEntity.status(400).body("{\"error\": \"booking does not exist!\"}");

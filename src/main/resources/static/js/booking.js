@@ -1,15 +1,14 @@
-const token = localStorage.getItem("jwtToken")
-
+localStorage.getItem("jwtToken")
 function getRooms (name){
     
   $.ajax({
-  url: "http://localhost:8080/getRooms",
+  url: BASE_URL + "/getRooms",
   type: "POST",
   data: {
     name:name
   },
   beforeSend: function (xhr) {
-    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("jwtToken"));
   },
   success: function (data) {
     // Do something with the booking data, e.g. create calendar events
@@ -26,11 +25,11 @@ function getRooms (name){
 function getBooking (){
     
     $.ajax({
-    url: "http://localhost:8080/bookings",
+    url: BASE_URL + "/bookings",
     type: "GET",
     dataType: 'text',
     beforeSend: function (xhr) {
-      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+      xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("jwtToken"));
     },
     success: function (data) {
       // Do something with the booking data, e.g. create calendar events
@@ -44,14 +43,15 @@ function getBooking (){
 
 function getBookingByRoom (roomName){
   
+  
   $.ajax({
-  url: "http://localhost:8080/getBookingByRoom",
+  url: BASE_URL + "/getBookingByRoom",
   type: "POST",
   data: {
     roomName:roomName
   },
   beforeSend: function (xhr) {
-    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("jwtToken"));
   },
 
   success: function (data) {
@@ -67,11 +67,12 @@ function getBookingByRoom (roomName){
 }
 
 function makeBooking(name, timeStart, timeEnd, email, calendar) {
+  checkTokenExpiration(localStorage.getItem("jwtToken"))
   $.ajax({
-    url: "http://localhost:8080/makeBooking",
+    url: BASE_URL + "/makeBooking",
     type: "POST",
     beforeSend: function(xhr) {
-      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+      xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("jwtToken"));
     },
     headers: {
       'Content-Type': 'application/json'
@@ -83,6 +84,7 @@ function makeBooking(name, timeStart, timeEnd, email, calendar) {
       },
       "timeStart": timeStart,
       "timeEnd": timeEnd,
+      "userEmail":email,
       "user": {
         "email": email
       }
@@ -96,27 +98,30 @@ function makeBooking(name, timeStart, timeEnd, email, calendar) {
   } 
   });
 }
-function deleteBooking(bookingToken, name) {
+function deleteBooking(bookingToken, roomName, userEmail) {
+  checkTokenExpiration(localStorage.getItem("jwtToken"))
   $.ajax({
-  url: "http://localhost:8080/cancelBooking",
+  url: BASE_URL + "/cancelBooking",
   type: "POST",
   beforeSend: function(xhr) {
-    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("jwtToken"));
   },
    
   data: {
+    email: userEmail,
     token : bookingToken
   },
-    
+  
       
   success:function (data) {
         
-    getBookingByRoom(name)
+    getBookingByRoom(roomName)
   
 },
   
   error: function (xhr, status, error) {
     console.log(xhr.responseText);
+    
   }
   
 });

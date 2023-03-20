@@ -1,20 +1,26 @@
 $(document).ready(function () {
-    $("#login-form").submit(function (e) {
+    $("#register-form").submit(function (e) {
         e.preventDefault();
 
+        var firstName = $("#firstName").val();
+        var lastName = $("#lastName").val();
         var email = $("#email").val();
         var password = $("#password").val();
-
+        var company = $("#company").val();
+console.log(firstName,lastName)
         $.ajax({
-            url: BASE_URL + "/test/authenticate",
+            url: BASE_URL + "/test/register",
             type: "POST",
             headers: {
                 'Content-Type': 'application/json'
               },
             data: JSON.stringify({
+                firstName: firstName,
+                lastName: lastName,
                 email: email,
                 password: password,
-                }),
+                company: company
+            }),
             success: function (data) {
                 var token = data.token;
                 
@@ -27,7 +33,6 @@ $(document).ready(function () {
                 const errorMessage = "Error: " + xhr.responseJSON.error;
                 const errorElement = document.querySelector(".w-form-fail > div");
                 errorElement.textContent = errorMessage;
-
                 
                 console.log("Error: " + xhr.responseJSON.error );
             }

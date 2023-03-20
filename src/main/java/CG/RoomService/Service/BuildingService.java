@@ -55,9 +55,26 @@ public class BuildingService {
         if(isBuildingExist(name)) {
             Building building = buildingRepository.findByName(name);
             for (Room room: building.getRooms()) {
-                deleteRoom(room.getName());
+                deleteRoomHard(room.getName());
             }
             buildingRepository.delete(building);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deleteRoomHard(String name) {
+        if(isRoomExist(name)) {
+            Room room = roomRepository.findByName(name);
+            if (!room.getBookings().isEmpty()) {
+                for (Booking booking: room.getBookings()) {
+                    bookingService.cancelBooking(booking.getUser().getEmail(), booking.getToken());
+                }
+            }
+            Building building = room.getBuilding();
+            building.removeRoom(room);
+            roomRepository.delete(room);
+            buildingRepository.save(building);
             return true;
         }
         return false;
@@ -66,16 +83,9 @@ public class BuildingService {
     public boolean deleteRoom(String name) {
         if(isRoomExist(name)) {
             Room room = roomRepository.findByName(name);
-            if (!room.getBookings().isEmpty()) {
-                for (Booking booking: room.getBookings()) {
-                    bookingService.cancelBooking(booking.getToken());
-                }
+            if (room.getBookings().isEmpty()) {
+                return deleteRoomHard(name);
             }
-            Building building = room.getBuilding();
-            building.removeRoom(room);
-            roomRepository.delete(room);
-            buildingRepository.save(building);
-            return true;
         }
         return false;
     }

@@ -1,18 +1,13 @@
 package CG.RoomService.Controllers;
 
-import CG.RoomService.Auth.AuthenticationRequest;
-import CG.RoomService.Auth.AuthenticationResponse;
-import CG.RoomService.Auth.AuthenticationService;
-import CG.RoomService.Auth.RegisterRequest;
-import CG.RoomService.Models.Booking;
-import CG.RoomService.Models.Building;
-import CG.RoomService.Models.Room;
-import CG.RoomService.Models.User;
+import CG.RoomService.Models.*;
+import CG.RoomService.Service.AuthenticationService;
 import CG.RoomService.Repositories.RoomRepository;
 import CG.RoomService.Service.BookingService;
 import CG.RoomService.Service.BuildingService;
 import CG.RoomService.Service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -115,38 +110,30 @@ public class AuthenticationController {
     /**
      * The PostMapping annotation is used to handle HTTP POST requests.
      * This method is used for registration, the request body is mapped to a RegisterRequest object
-     *
-     * @param firstName the request containing the user's registration information
      * @return a ResponseEntity with an AuthenticationResponse object
      */
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
-            @RequestParam String firstName,
-            @RequestParam String lastName,
-            @RequestParam String company,
-            @RequestParam String email,
-            @RequestParam String password
-
-    ) {
-        RegisterRequest request = new RegisterRequest(firstName, lastName, email, password, company);
-        return ResponseEntity.ok(service.register(request));
+    public ResponseEntity<Response> register(@RequestBody RegisterRequest registerRequest) {
+        try {
+            return ResponseEntity.ok(service.register(registerRequest));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ExceptionResponse("Missing necessary information"));
+        }
     }
 
     /**
      * The PostMapping annotation is used to handle HTTP POST requests.
      * This method is used for authentication, the request body is mapped to an AuthenticationRequest object
-     *
-     * @param email the request containing the user's authentication information
-     * @param password password of the user
      * @return a ResponseEntity with an AuthenticationResponse object
      */
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestParam String email,
-            @RequestParam String password
-    ) {
-        AuthenticationRequest request = new AuthenticationRequest(email, password);
-        return ResponseEntity.ok(service.authenticate(request));
+    public ResponseEntity<Response> authenticate(@RequestBody AuthenticationRequest request ){
+             try {
+            return ResponseEntity.ok(service.authenticate(request));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ExceptionResponse("Invalid email and password combination"));
+
+    }
     }
     @GetMapping("/user")
     public ResponseEntity<String> sayHello() {

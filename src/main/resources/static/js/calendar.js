@@ -1,7 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-  getBooking();
-  getRooms("test1");
-  document.querySelectorAll('.myButton').forEach(function(button) {
+    document.querySelectorAll('.myButton').forEach(function(button) {
     button.addEventListener('click', function(event) {
       event.preventDefault();
     });
@@ -32,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
       calendar.addEventSource(events);
     },
     eventClick: function(info) {
-      
+            
         var modalId = 'modal-' + info.event.id; // Add booking ID to modal ID
         var reserveBtnId = 'reserveBtn-' + info.event.id; // Add booking ID to reserve button ID
         var deleteBtnId = 'deleteBtn-' + info.event.id; // Add booking ID to delete button ID
@@ -49,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
               </div>
               <div class="modal-body">
                 <p>Booked from ${moment(info.event.start).format('DD-MM-YYYY [Time:] HH:mm')} to ${moment(info.event.end).format('DD-MM-YYYY [Time:] HH:mm')}</p>
+                <div><p>booked by ${info.event.extendedProps.email}</p></div>
                 </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-action="delete" id="${deleteBtnId}">Delete</button>
@@ -69,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Check if this button is for an available slot or a booking
             var action = this.dataset.action;
             if (action === 'reserve') {
-              makeBooking(info.event.title, info.event.start, info.event.end, "test2@cg.nl", calendar);
+              makeBooking(info.event.title, info.event.start, info.event.end, checkTokenUser(localStorage.getItem("jwtToken")), calendar);
               console.log('Reserve button clicked for an available slot');
             }
             modalInstance.hide();
@@ -80,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var deleteBtn = modal.querySelector(`#${deleteBtnId}`);
         if (deleteBtn) {
           deleteBtn.addEventListener('click', function () {
-            deleteBooking(info.event.id, info.event.title);
+            deleteBooking(info.event.id, info.event.title, checkTokenUser(localStorage.getItem("jwtToken")));
             console.log('Delete button clicked');
             modalInstance.hide();
             modal.remove();
@@ -107,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
   
     rooms.forEach(function(room) {
       getBookingByRoom(room.name);
-      bookings = JSON.parse(localStorage.getItem(room.name));
+      bookings = JSON.parse(localStorage.getItem(room.name));      
       if (bookings === null) {
         bookings = [];
       }
@@ -137,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 backgroundColor: '#008000',
                 borderColor: '#008000',
                 textColor: '#fff',
-                editable: true,
+                editable: false,
               });
             }
           }
@@ -145,19 +144,18 @@ document.addEventListener('DOMContentLoaded', function () {
   
         bookings.forEach(function(booking) {
               var event = {
+              email: booking.userEmail,
               id: booking.token,
               title: room.name,
               start: booking.timeStart,
               end: booking.timeEnd,
-              user: booking.user,
               backgroundColor:  '#FF0000',
               borderColor: '#FF0000',
               textColor: '#fff',
-              editable: true,
+              editable: false,
               allDay: false
             };
-            events.push(event);
-          
+            events.push(event);          
         });
       
       });

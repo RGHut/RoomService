@@ -30,6 +30,9 @@ public class Booking {
     @JsonBackReference(value = "user")
     private User user;
 
+    @Column(name = "reserved_by")
+    private String userEmail;
+
     public Booking() {
     }
 
@@ -39,6 +42,7 @@ public class Booking {
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
         this.user = user;
+        this.userEmail = user.getEmail();
     }
 
     public Booking(Room room, OffsetDateTime timeStart, User user) {
@@ -88,5 +92,13 @@ public class Booking {
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 }

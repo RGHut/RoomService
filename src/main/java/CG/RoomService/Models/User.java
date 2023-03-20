@@ -26,12 +26,13 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue
     private int id;
-    private String firstname;
-    private String lastname;
+    private String firstName;
+    private String lastName;
     @Column(unique = true)
     private String email;
     @JsonIgnore
     private String password;
+
     private String company;
     @Enumerated(EnumType.STRING)
     private Role role;
