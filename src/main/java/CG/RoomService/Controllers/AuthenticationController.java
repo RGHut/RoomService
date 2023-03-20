@@ -126,7 +126,7 @@ public class AuthenticationController {
      * This method is used for authentication, the request body is mapped to an AuthenticationRequest object
      * @return a ResponseEntity with an AuthenticationResponse object
      */
-    @GetMapping("/authenticate")
+    @PostMapping("/authenticate")
     public ResponseEntity<Response> authenticate(@RequestBody AuthenticationRequest request ){
              try {
             return ResponseEntity.ok(service.authenticate(request));
