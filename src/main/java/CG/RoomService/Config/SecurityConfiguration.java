@@ -69,8 +69,8 @@ public class SecurityConfiguration extends GlobalAuthenticationConfigurerAdapter
                 .headers().frameOptions().disable()
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers(toH2Console())
-                .permitAll()
+//                .requestMatchers(toH2Console())
+//                .permitAll()
                 .requestMatchers("/test/**")
                 .permitAll()
                 // permit requests to /demo-controller/admin/** for users with ADMIN authority
