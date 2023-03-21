@@ -1,10 +1,9 @@
 package CG.RoomService.Service;
 
 
-import CG.RoomService.Models.Booking;
-import CG.RoomService.Models.Role;
-import CG.RoomService.Models.User;
-import CG.RoomService.Repositories.BookingRepository;
+import CG.RoomService.Models.DataModels.Booking;
+import CG.RoomService.Models.Enums.Role;
+import CG.RoomService.Models.DataModels.User;
 import CG.RoomService.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

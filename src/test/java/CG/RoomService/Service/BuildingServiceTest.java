@@ -1,12 +1,10 @@
 package CG.RoomService.Service;
 
-import CG.RoomService.Models.Building;
-import CG.RoomService.Models.Room;
+import CG.RoomService.Models.DataModels.Building;
+import CG.RoomService.Models.DataModels.Room;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class BuildingServiceTest {
 

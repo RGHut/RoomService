@@ -1,10 +1,10 @@
 package CG.RoomService.Service;
 
-import CG.RoomService.Models.RegisterRequest;
-import CG.RoomService.Models.AuthenticationRequest;
-import CG.RoomService.Models.AuthenticationResponse;
-import CG.RoomService.Models.Role;
-import CG.RoomService.Models.User;
+import CG.RoomService.Models.Requests.RegisterRequest;
+import CG.RoomService.Models.Requests.AuthenticationRequest;
+import CG.RoomService.Models.Responses.AuthenticationResponse;
+import CG.RoomService.Models.Enums.Role;
+import CG.RoomService.Models.DataModels.User;
 import CG.RoomService.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

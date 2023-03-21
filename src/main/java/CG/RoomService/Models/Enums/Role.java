@@ -1,4 +1,4 @@
-package CG.RoomService.Models;
+package CG.RoomService.Models.Enums;
 
 public enum Role {
     GUEST,

@@ -1,7 +1,6 @@
 package CG.RoomService.Config;
 
-import CG.RoomService.Models.AuthenticationResponse;
-import CG.RoomService.Models.ExceptionResponse;
+import CG.RoomService.Models.Responses.ExceptionResponse;
 import CG.RoomService.Service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
