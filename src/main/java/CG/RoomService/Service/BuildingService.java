@@ -1,11 +1,10 @@
 package CG.RoomService.Service;
 
-import CG.RoomService.Models.Booking;
-import CG.RoomService.Models.Building;
-import CG.RoomService.Models.Room;
+import CG.RoomService.Models.*;
 import CG.RoomService.Repositories.BuildingRepository;
 import CG.RoomService.Repositories.RoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,45 +24,55 @@ public class BuildingService {
         return (ArrayList<Building>) buildingRepository.findAll();
     }
 
-    public List<Room> getRooms(String name) {
+    public ResponseEntity<Response> getRooms(String name) {
         if (buildingRepository.existsBuildingByName(name)) {
             Building building = buildingRepository.findByName(name);
-            return building.getRooms();
+            return ResponseEntity.status(200).body(new RoomListResponse(building.getRooms()));
         }else {
-            return null;
+            return ResponseEntity.status(400).body(new ExceptionResponse("Building does not exist"));
         }
     }
 
-    public boolean addBuilding(String name) {
+    public ResponseEntity<Response> addBuilding(String name) {
         if (buildingRepository.existsBuildingByName(name)){
-            return true;
+            return ResponseEntity.status(400).body(new ExceptionResponse("Building already exists"));
         } else {
             Building building = new Building(name);
             buildingRepository.save(building);
-            return false;
+            return ResponseEntity.status(200).body(new MessageResponse("Created: " + name));
         }
     }
 
-    public void addRoom(Room room) {
-        Building building = buildingRepository.findByName(room.getBuilding().getName());
-        building.addRoom(room);
-        roomRepository.save(room);
-        buildingRepository.save(building);
+    public ResponseEntity<Response> addRoom(Room room) {
+        if (isBuildingExist(room.getBuilding().getName())) {
+            if (isRoomExist(room.getName())) {
+                return ResponseEntity.status(400).body(new ExceptionResponse("Room already exists"));
+            }
+            Building building = buildingRepository.findByName(room.getBuilding().getName());
+            building.addRoom(room);
+            roomRepository.save(room);
+            buildingRepository.save(building);
+
+            return ResponseEntity.status(200).body(new MessageResponse("{\"created\":\"" + room.getName() + "\"}"));
+        } else {
+            return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"Building does not exists!\"}"));
+        }
     }
 
-    public boolean deleteBuilding(String name) {
+    public ResponseEntity<Response> deleteBuilding(String name) {
         if(isBuildingExist(name)) {
             Building building = buildingRepository.findByName(name);
             for (Room room: building.getRooms()) {
                 deleteRoomHard(room.getName());
             }
             buildingRepository.delete(building);
-            return true;
+            return ResponseEntity.status(200).body(new MessageResponse("{\"Deleted\":\"" + name + " and all its rooms\"}"));
         }
-        return false;
+        return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"building does not exist\"}"));
     }
 
-    public boolean deleteRoomHard(String name) {
+
+    public ResponseEntity<Response> deleteRoomHard(String name) {
         if(isRoomExist(name)) {
             Room room = roomRepository.findByName(name);
             if (!room.getBookings().isEmpty()) {
@@ -75,19 +84,20 @@ public class BuildingService {
             building.removeRoom(room);
             roomRepository.delete(room);
             buildingRepository.save(building);
-            return true;
+            return ResponseEntity.status(200).body(new MessageResponse("{\"Deleted\":\"" + name+ "\"}"));
         }
-        return false;
+        return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"room does not exist\"}"));
     }
 
-    public boolean deleteRoom(String name) {
+    public ResponseEntity<Response> deleteRoom(String name) {
         if(isRoomExist(name)) {
             Room room = roomRepository.findByName(name);
             if (room.getBookings().isEmpty()) {
                 return deleteRoomHard(name);
             }
+            return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"Unable to delete a room that still has active bookings\"}"));
         }
-        return false;
+        return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"room does not exist\"}"));
     }
 
     public boolean isBuildingExist(String name) {
@@ -104,13 +114,16 @@ public class BuildingService {
             roomRepository.save(room);
         }
     }
-
-    public List<Room> getRoomsByBuilding(String buildingName) {
-        Building building = buildingRepository.findByName(buildingName);
-        return roomRepository.findByBuilding(building);
+    public Room getRoom(String roomName){
+        return roomRepository.findByName(roomName);
     }
-
-    public Room getRoom(String name) {
-        return roomRepository.findByName(name);
+    public ResponseEntity<?> getRoomFromBuilding(String buildingName, String roomName) {
+        if (isBuildingExist(buildingName)) {
+            if (isRoomExist(roomName)) {
+                return ResponseEntity.status(200).body(roomRepository.findByName(roomName));
+            }
+            return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"room does not exist\"}"));
+        }
+        return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"building does not exist\"}"));
     }
 }

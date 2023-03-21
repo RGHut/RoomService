@@ -45,7 +45,8 @@ public class AuthenticationController {
         Room room2 = new Room("test 1.2", 1, 4, true);
         room2.setBuilding(building);
 
-        if (!buildingService.addBuilding("test1")) {
+        if (!buildingService.isBuildingExist("test1")) {
+            buildingService.addBuilding("test1");
             buildingService.addRoom(room1);
             buildingService.addRoom(room2);
             RegisterRequest request = new RegisterRequest("test1", "lastName", "test1@cg.nl", "12345", "cg");
