@@ -1,5 +1,6 @@
-package CG.RoomService.Models;
+package CG.RoomService.Models.Responses;
 
+import CG.RoomService.Models.DataModels.Room;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +12,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookingListResponse extends Response{
-    List<Booking> list;
+public class RoomListResponse extends Response {
+    List<Room> list;
 }

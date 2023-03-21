@@ -1,8 +1,8 @@
 package CG.RoomService.Controllers;
 
-import CG.RoomService.Models.Building;
-import CG.RoomService.Models.Response;
-import CG.RoomService.Models.Room;
+import CG.RoomService.Models.DataModels.Building;
+import CG.RoomService.Models.Responses.Response;
+import CG.RoomService.Models.DataModels.Room;
 
 import CG.RoomService.Service.BookingService;
 import CG.RoomService.Service.BuildingService;

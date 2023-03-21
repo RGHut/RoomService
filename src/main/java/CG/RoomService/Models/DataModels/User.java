@@ -1,5 +1,6 @@
-package CG.RoomService.Models;
+package CG.RoomService.Models.DataModels;
 
+import CG.RoomService.Models.Enums.Role;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

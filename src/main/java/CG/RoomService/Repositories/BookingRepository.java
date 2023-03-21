@@ -1,8 +1,8 @@
 package CG.RoomService.Repositories;
 
-import CG.RoomService.Models.Booking;
-import CG.RoomService.Models.Room;
-import CG.RoomService.Models.User;
+import CG.RoomService.Models.DataModels.Booking;
+import CG.RoomService.Models.DataModels.Room;
+import CG.RoomService.Models.DataModels.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

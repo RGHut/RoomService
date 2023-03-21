@@ -1,4 +1,4 @@
-package CG.RoomService.Models;
+package CG.RoomService.Models.DataModels;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;

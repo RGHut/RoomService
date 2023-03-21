@@ -1,6 +1,6 @@
 package CG.RoomService.Repositories;
 
-import CG.RoomService.Models.User;
+import CG.RoomService.Models.DataModels.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,12 @@
 package CG.RoomService.Service;
 
-import CG.RoomService.Models.*;
+import CG.RoomService.Models.DataModels.Booking;
+import CG.RoomService.Models.DataModels.Building;
+import CG.RoomService.Models.DataModels.Room;
+import CG.RoomService.Models.Responses.ExceptionResponse;
+import CG.RoomService.Models.Responses.MessageResponse;
+import CG.RoomService.Models.Responses.Response;
+import CG.RoomService.Models.Responses.RoomListResponse;
 import CG.RoomService.Repositories.BuildingRepository;
 import CG.RoomService.Repositories.RoomRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

@@ -1,8 +1,8 @@
 package CG.RoomService.Controllers;
 
-import CG.RoomService.Models.Booking;
+import CG.RoomService.Models.DataModels.Booking;
 
-import CG.RoomService.Models.Response;
+import CG.RoomService.Models.Responses.Response;
 import CG.RoomService.Service.BookingService;
 import lombok.RequiredArgsConstructor;
 
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.time.OffsetDateTime;
-import java.util.List;
 
 
 /**
@@ -90,11 +89,8 @@ public class BookingController {
      * @return ResponseBody containing either the retrieved bookings or an error message if the user does not exist
      */
     @PostMapping("/getBookingByUser")
-    public ResponseEntity<?> getBookingByUser(@RequestParam String userEmail) {
-        if (bookingService.isUserExistByEmail(userEmail)) {
-            return ResponseEntity.status(200).body(bookingService.getBookingsByUser(userEmail));
-        }
-        return ResponseEntity.status(400).body("{\"error\":\"User with Email '" + userEmail + "' does not exist\"}");
+    public ResponseEntity<Response> getBookingByUser(@RequestParam String userEmail) {
+        return bookingService.getBookingsByUser(userEmail);
     }
 
     /**
@@ -103,11 +99,8 @@ public class BookingController {
      * @return ResponseBody containing a list of bookings or an error message if the room does not exist
      */
     @PostMapping("/getBookingByRoom")
-    public ResponseEntity<?> getBookingsByRoom(@RequestParam String roomName) {
-        if (bookingService.isRoomExistByName(roomName)) {
-            return ResponseEntity.status(200).body(bookingService.getBookingsByRoom(roomName));
-        }
-        return ResponseEntity.status(400).body("{\"error\":\"Room does not exist\"}");
+    public ResponseEntity<Response> getBookingsByRoom(@RequestParam String roomName) {
+        return bookingService.getBookingsByRoom(roomName);
     }
 
     /**

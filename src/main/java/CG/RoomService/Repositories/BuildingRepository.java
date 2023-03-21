@@ -1,6 +1,6 @@
 package CG.RoomService.Repositories;
 
-import CG.RoomService.Models.Building;
+import CG.RoomService.Models.DataModels.Building;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

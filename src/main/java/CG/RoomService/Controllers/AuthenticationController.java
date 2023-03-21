@@ -1,6 +1,13 @@
 package CG.RoomService.Controllers;
 
-import CG.RoomService.Models.*;
+import CG.RoomService.Models.DataModels.Booking;
+import CG.RoomService.Models.DataModels.Building;
+import CG.RoomService.Models.DataModels.Room;
+import CG.RoomService.Models.DataModels.User;
+import CG.RoomService.Models.Requests.AuthenticationRequest;
+import CG.RoomService.Models.Requests.RegisterRequest;
+import CG.RoomService.Models.Responses.ExceptionResponse;
+import CG.RoomService.Models.Responses.Response;
 import CG.RoomService.Service.AuthenticationService;
 import CG.RoomService.Repositories.RoomRepository;
 import CG.RoomService.Service.BookingService;

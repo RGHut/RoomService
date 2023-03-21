@@ -1,6 +1,12 @@
 package CG.RoomService.Service;
 
-import CG.RoomService.Models.*;
+import CG.RoomService.Models.DataModels.Booking;
+import CG.RoomService.Models.DataModels.Room;
+import CG.RoomService.Models.DataModels.User;
+import CG.RoomService.Models.Responses.BookingListResponse;
+import CG.RoomService.Models.Responses.ExceptionResponse;
+import CG.RoomService.Models.Responses.MessageResponse;
+import CG.RoomService.Models.Responses.Response;
 import CG.RoomService.Repositories.BookingRepository;
 import CG.RoomService.Repositories.RoomRepository;
 import CG.RoomService.Repositories.UserRepository;
@@ -100,15 +106,22 @@ public class BookingService {
         return roomRepository.existsRoomByName(name);
     }
 
-    public List<Booking> getBookingsByUser(String email) {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        User user = optionalUser.get();
-        return (bookingRepository.findByUser(user));
+    public ResponseEntity<Response> getBookingsByUser(String email) {
+        if (isUserExistByEmail(email)) {
+            Optional<User> optionalUser = userRepository.findByEmail(email);
+            User user = optionalUser.get();
+            return ResponseEntity.status(200).body(new BookingListResponse(bookingRepository.findByUser(user)));
+        }
+        return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"User with Email '" + email + "' does not exist\"}"));
     }
 
-    public List<Booking> getBookingsByRoom(String roomName) {
-        Room room = roomRepository.findByName(roomName);
-        return (bookingRepository.findByRoom(room));
+    public ResponseEntity<Response> getBookingsByRoom(String roomName) {
+        if (isRoomExistByName(roomName)) {
+            Room room = roomRepository.findByName(roomName);
+            return ResponseEntity.status(200).body(new BookingListResponse(bookingRepository.findByRoom(room)));
+        }
+        return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"Room does not exist\"}"));
+
     }
 
     public boolean bookingCleanup() {
