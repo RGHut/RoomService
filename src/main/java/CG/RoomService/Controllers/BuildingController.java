@@ -1,6 +1,7 @@
 package CG.RoomService.Controllers;
 
 import CG.RoomService.Models.Building;
+import CG.RoomService.Models.Response;
 import CG.RoomService.Models.Room;
 
 import CG.RoomService.Service.BookingService;
@@ -41,11 +42,8 @@ public class BuildingController {
      * @return ResponseBody with a list of rooms or an error message
      */
     @PostMapping("/getRooms")
-    public ResponseEntity<?> getRooms(@RequestParam String name) {
-        if (buildingService.isBuildingExist(name)) {
-            return ResponseEntity.status(200).body(buildingService.getRooms(name));
-        }
-        return ResponseEntity.status(400).body("{\"error\":\"Building does not exists!\"}");
+    public ResponseEntity<Response> getRooms(@RequestParam String name) {
+        return buildingService.getRooms(name);
     }
 
     /**
@@ -54,11 +52,8 @@ public class BuildingController {
      * @return response with a succes message or an error message if the building already exists
      */
     @PostMapping("/addBuilding")
-    public ResponseEntity<?> addBuilding(@RequestParam String name) {
-        if (buildingService.addBuilding(name)) {
-            return ResponseEntity.status(400).body("{\"error\":\"Building already exists!\"}");
-        }
-        return ResponseEntity.status(200).body("{\"created\":\"" + name + "\"}");
+    public ResponseEntity<Response> addBuilding(@RequestParam String name) {
+        return buildingService.addBuilding(name);
     }
 
     /**
@@ -67,16 +62,8 @@ public class BuildingController {
      * @return response with an error message if the room already exists or if the building the room needs to be added to already exists, or a succes message.
      */
     @PostMapping("/addRoom")
-    public ResponseEntity<?> addRoom(@RequestBody Room room) {
-        if (buildingService.isBuildingExist(room.getBuilding().getName())) {
-            if (buildingService.isRoomExist(room.getName())) {
-                return ResponseEntity.status(400).body("{\"error\":\"Room already exists!\"}");
-            }
-            buildingService.addRoom(room);
-            return ResponseEntity.status(200).body("{\"created\":\"" + room.getName() + "\"}");
-        } else {
-            return ResponseEntity.status(400).body("{\"error\":\"Building does not exists!\"}");
-        }
+    public ResponseEntity<Response> addRoom(@RequestBody Room room) {
+        return buildingService.addRoom(room);
     }
 
     /**
@@ -85,12 +72,9 @@ public class BuildingController {
      * @return response with a succes or error message
      */
     @DeleteMapping("deleteRoom")
-    public ResponseEntity<?> deleteRoom(@RequestParam String roomName) {
+    public ResponseEntity<Response> deleteRoom(@RequestParam String roomName) {
         bookingService.bookingCleanup();
-        if (buildingService.deleteRoom(roomName)) {
-            return ResponseEntity.status(200).body("{\"Deleted\":\"" + roomName + "\"}");
-        }
-        return ResponseEntity.status(400).body("{\"error\":\"room does not exist\"}");
+        return buildingService.deleteRoom(roomName);
     }
 
     /**
@@ -99,12 +83,9 @@ public class BuildingController {
      * @return response with a succes or error message
      */
     @DeleteMapping("deleteRoomHard")
-    public ResponseEntity<?> deleteRoomHard(@RequestParam String roomName) {
+    public ResponseEntity<Response>  deleteRoomHard(@RequestParam String roomName) {
         bookingService.bookingCleanup();
-        if (buildingService.deleteRoomHard(roomName)) {
-            return ResponseEntity.status(200).body("{\"Deleted\":\"" + roomName + "\"}");
-        }
-        return ResponseEntity.status(400).body("{\"error\":\"room does not exist\"}");
+        return buildingService.deleteRoomHard(roomName);
     }
 
     /**
@@ -113,12 +94,9 @@ public class BuildingController {
      * @return response with a success or error message
      */
     @DeleteMapping("deleteBuilding")
-    public ResponseEntity<?> deleteBuilding(@RequestParam String buildingName) {
+    public ResponseEntity<Response> deleteBuilding(@RequestParam String buildingName) {
         bookingService.bookingCleanup();
-        if (buildingService.deleteBuilding(buildingName)) {
-            return ResponseEntity.status(200).body("{\"Deleted\":\"" + buildingName + " and all its rooms\"}");
-        }
-        return ResponseEntity.status(400).body("{\"error\":\"building does not exist\"}");
+        return buildingService.deleteBuilding(buildingName);
     }
 
     /**
@@ -129,13 +107,7 @@ public class BuildingController {
      */
     @PostMapping("/getRoom")
     public ResponseEntity<?> getRoom(@RequestParam String buildingName, @RequestParam String roomName) {
-        if (buildingService.isBuildingExist(buildingName)) {
-            if (buildingService.isRoomExist(roomName)) {
-                return ResponseEntity.status(200).body(buildingService.getRoom(roomName));
-            }
-            return ResponseEntity.status(400).body("{\"error\":\"room does not exist\"}");
-        }
-        return ResponseEntity.status(400).body("{\"error\":\"building does not exist\"}");
+        return buildingService.getRoomFromBuilding(buildingName, roomName);
     }
 
     /**

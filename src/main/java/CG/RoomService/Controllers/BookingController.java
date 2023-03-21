@@ -2,6 +2,7 @@ package CG.RoomService.Controllers;
 
 import CG.RoomService.Models.Booking;
 
+import CG.RoomService.Models.Response;
 import CG.RoomService.Service.BookingService;
 import lombok.RequiredArgsConstructor;
 
@@ -34,8 +35,8 @@ public class BookingController {
      * @return List<Booking> list of all bookings
      */
     @GetMapping("/bookings")
-    public ResponseEntity<List<Booking>> getBookings() {
-        return ResponseEntity.status(200).body(bookingService.getBookings());
+    public ResponseEntity<Response> getBookings() {
+        return bookingService.getBookings();
 //        return bookings;
     }
     /**
@@ -44,11 +45,8 @@ public class BookingController {
      * @return - HTTP response with a success or error message
      */
     @PostMapping("/makeBooking")
-    public ResponseEntity<?> makeBooking(@RequestBody Booking booking) {
-        if (bookingService.makeBooking(booking)){
-            return ResponseEntity.status(200).body("{\"Booking created\" " + booking.getToken() + "}");
-        }
-        return ResponseEntity.status(400).body("{\"error\":\"Booking failed\"}");
+    public ResponseEntity<Response> makeBooking(@RequestBody Booking booking) {
+        return bookingService.makeBooking(booking);
     }
 
     /**
@@ -59,11 +57,8 @@ public class BookingController {
      * @return - HTTP response with a success or error message
      */
     @PostMapping("/cancelBooking")
-    public ResponseEntity<?> cancelBooking(@RequestParam String token, @RequestParam String email) {
-        if (bookingService.cancelBooking(email, token)) {
-            return ResponseEntity.status(200).body("{\"booking removed\"}");
-        }
-        return ResponseEntity.status(400).body("{\"error\": \"booking does not exist!\"}");
+    public ResponseEntity<Response> cancelBooking(@RequestParam String token, @RequestParam String email) {
+        return bookingService.cancelBooking(email, token);
     }
 
     /**
@@ -74,15 +69,8 @@ public class BookingController {
      * @return A response indicating whether the booking was changed successfully or not
      */
     @PostMapping("/changeBooking")
-    public ResponseEntity<?> changeBooking(@RequestParam String token, @RequestParam OffsetDateTime time) {
-        if (bookingService.isBookingExist(token)) {
-            if (bookingService.changeBooking(token, time)) {
-                return ResponseEntity.status(200).body("{\"booking changed to " + time + "\"}");
-
-            }
-            return ResponseEntity.status(400).body("{\"error\":\"Room is already booked for that timeslot!\"}");
-        }
-        return ResponseEntity.status(400).body("{\"error\":\"booking does not exist!\"}");
+    public ResponseEntity<Response> changeBooking(@RequestParam String token, @RequestParam OffsetDateTime time) {
+        return bookingService.changeBooking(token, time);
     }
 
     /**
@@ -93,10 +81,7 @@ public class BookingController {
      */
     @PostMapping("/getBooking")
     public ResponseEntity<?> getBooking(@RequestParam String token) {
-        if (bookingService.isBookingExist(token)) {
-            return ResponseEntity.status(200).body(bookingService.getBooking(token));
-        }
-        return ResponseEntity.status(400).body("{\"error\":\"booking does not exist\"}");
+        return bookingService.getBooking(token);
     }
 
     /**
