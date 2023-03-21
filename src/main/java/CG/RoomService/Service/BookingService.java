@@ -56,8 +56,6 @@ public class BookingService {
     public boolean cancelBooking(String email, String token) {
         if (bookingRepository.existsBookingByToken(token)) {
             Booking booking = bookingRepository.findByToken(token);
-            System.out.println(email);
-            System.out.println(booking.getUserEmail());
             if (booking.getUserEmail().equals(email)) {
                 bookingRepository.deleteById(booking.getId());
                 Room room = booking.getRoom();
