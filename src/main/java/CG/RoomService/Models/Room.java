@@ -115,26 +115,34 @@ public class Room {
     public boolean isBooked(OffsetDateTime time) {
         boolean booked = false;
         // create a ZonedDateTime object for the date and time in the UTC time zone
-        ZonedDateTime utcDateTime = ZonedDateTime.parse(time.toString(), DateTimeFormatter.ISO_ZONED_DATE_TIME);
-
-// convert the date and time to the Central European Time zone
         ZoneId cetZoneId = ZoneId.of("Europe/Paris"); // you can replace "Europe/Paris" with the appropriate time zone ID
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+
+        ZonedDateTime utcDateTime = ZonedDateTime.parse(time.toString(), DateTimeFormatter.ISO_ZONED_DATE_TIME);
+// convert the date and time to the Central European Time zone
+
         ZonedDateTime cetDateTime = utcDateTime.withZoneSameInstant(cetZoneId);
 
 // format the date and time in the CET time zone
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+
         String formattedDateTime = cetDateTime.format(formatter);
         OffsetDateTime offsetDateTime = OffsetDateTime.parse(formattedDateTime);
 
-
-
         for (Booking booking : bookings) {
+            ZonedDateTime utcDateTimeBooking = ZonedDateTime.parse(booking.getTimeStart().toString(), DateTimeFormatter.ISO_ZONED_DATE_TIME);
+// convert the date and time to the Central European Time zone
 
+            ZonedDateTime cetDateTimeBooking = utcDateTimeBooking.withZoneSameInstant(cetZoneId);
+
+// format the date and time in the CET time zone
+
+            String formattedDateTimeBooking = cetDateTimeBooking.format(formatter);
+            OffsetDateTime offsetDateTimeBooking = OffsetDateTime.parse(formattedDateTimeBooking);
             if (offsetDateTime.isAfter(booking.getTimeStart()) && offsetDateTime.isBefore(booking.getTimeEnd())) {
                 booked = true;
             } else if (offsetDateTime.plusHours(1).isAfter(booking.getTimeStart()) && offsetDateTime.plusHours(1).isBefore(booking.getTimeEnd())) {
                 booked = true;
-            } else if (booking.getTimeStart().equals(offsetDateTime)) {
+            } else if (offsetDateTimeBooking.equals(offsetDateTime)) {
                 booked = true;
             }
         }
