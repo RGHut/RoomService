@@ -124,15 +124,17 @@ public class BookingService {
 
     }
 
-    public boolean bookingCleanup() {
+    public ResponseEntity<Response> bookingCleanup() {
         OffsetDateTime current = OffsetDateTime.now();
         List<Booking> bookingList = bookingRepository.findAll();
+        int i = 0;
         for (Booking booking: bookingList) {
             if (booking.getTimeEnd().isBefore(current)) {
                 cancelBooking(booking.getUser().getEmail(), booking.getToken());
+                i++;
             }
         }
-        return true;
+        return ResponseEntity.status(200).body(new MessageResponse("Booking cleanup successful, deleted: " + i + " Bookings"));
     }
 
 
