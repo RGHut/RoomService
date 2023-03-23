@@ -50,7 +50,7 @@ public class BookingService {
         if (optionalUser.isEmpty()) {
             return ResponseEntity.status(400).body(new ExceptionResponse("Booking failed, User does not exist"));
         }
-        if (room.isBooked(booking.getTimeStart())) {
+        if (room.isBooked(booking.getTimeStart(), booking.getTimeEnd())) {
             return ResponseEntity.status(400).body(new ExceptionResponse("Booking failed, Room is already booked for that timeslot"));
         }
         User user = optionalUser.get();
@@ -80,16 +80,16 @@ public class BookingService {
         return ResponseEntity.status(400).body(new ExceptionResponse("booking does not exist!"));
     }
 
-    public ResponseEntity<Response> changeBooking(String token, OffsetDateTime time) {
+    public ResponseEntity<Response> changeBooking(String token, OffsetDateTime timeStart, OffsetDateTime timeEnd) {
         if (isBookingExist(token)) {
             Booking booking = bookingRepository.findByToken(token);
-            if (booking.getRoom().isBooked(time)){
+            if (booking.getRoom().isBooked(timeStart, timeEnd)){
                 return ResponseEntity.status(400).body(new ExceptionResponse("Room is already booked for that timeslot!"));
             }
-            booking.setTimeStart(time);
-            booking.setTimeEnd(time.plusHours(1));
+            booking.setTimeStart(timeStart);
+            booking.setTimeEnd(timeEnd);
             bookingRepository.save(booking);
-            return ResponseEntity.status(200).body(new MessageResponse("booking changed to " + time + ""));
+            return ResponseEntity.status(200).body(new MessageResponse("booking changed to " + timeStart + "-" + timeEnd));
         }
         return ResponseEntity.status(400).body(new ExceptionResponse("booking does not exist!"));
     }

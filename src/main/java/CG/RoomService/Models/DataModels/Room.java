@@ -112,37 +112,21 @@ public class Room {
         }
     }
 
-    public boolean isBooked(OffsetDateTime time) {
+    public boolean isBooked(OffsetDateTime timeStart, OffsetDateTime timeEnd) {
         boolean booked = false;
-        // create a ZonedDateTime object for the date and time in the UTC time zone
-        ZoneId cetZoneId = ZoneId.of("Europe/Paris"); // you can replace "Europe/Paris" with the appropriate time zone ID
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
-        ZonedDateTime utcDateTime = ZonedDateTime.parse(time.toString(), DateTimeFormatter.ISO_ZONED_DATE_TIME);
-// convert the date and time to the Central European Time zone
-
-        ZonedDateTime cetDateTime = utcDateTime.withZoneSameInstant(cetZoneId);
-
-// format the date and time in the CET time zone
-
-        String formattedDateTime = cetDateTime.format(formatter);
-        OffsetDateTime offsetDateTime = OffsetDateTime.parse(formattedDateTime);
+        OffsetDateTime cTimeStart = timeConverter(timeStart);
+        OffsetDateTime cTimeEnd = timeConverter(timeEnd);
 
         for (Booking booking : bookings) {
-            ZonedDateTime utcDateTimeBooking = ZonedDateTime.parse(booking.getTimeStart().toString(), DateTimeFormatter.ISO_ZONED_DATE_TIME);
-// convert the date and time to the Central European Time zone
+            OffsetDateTime bookingStart = timeConverter(booking.getTimeStart());
+            OffsetDateTime bookingEnd = timeConverter(booking.getTimeEnd());
 
-            ZonedDateTime cetDateTimeBooking = utcDateTimeBooking.withZoneSameInstant(cetZoneId);
-
-// format the date and time in the CET time zone
-
-            String formattedDateTimeBooking = cetDateTimeBooking.format(formatter);
-            OffsetDateTime offsetDateTimeBooking = OffsetDateTime.parse(formattedDateTimeBooking);
-            if (offsetDateTime.isAfter(booking.getTimeStart()) && offsetDateTime.isBefore(booking.getTimeEnd())) {
+            if (cTimeStart.isAfter(bookingStart) && cTimeStart.isBefore(bookingEnd)) {
                 booked = true;
-            } else if (offsetDateTime.plusHours(1).isAfter(booking.getTimeStart()) && offsetDateTime.plusHours(1).isBefore(booking.getTimeEnd())) {
+            } else if (cTimeEnd.isAfter(booking.getTimeStart()) && cTimeEnd.isBefore(booking.getTimeEnd())) {
                 booked = true;
-            } else if (offsetDateTimeBooking.equals(offsetDateTime)) {
+            } else if (bookingStart.equals(cTimeStart)) {
                 booked = true;
             }
         }
@@ -155,5 +139,20 @@ public class Room {
 
     public void setAccessible(boolean accessible) {
         isAccessible = accessible;
+    }
+
+    private OffsetDateTime timeConverter(OffsetDateTime time) {
+        ZoneId cetZoneId = ZoneId.of("Europe/Paris"); // you can replace "Europe/Paris" with the appropriate time zone ID
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+
+        ZonedDateTime utcDateTime = ZonedDateTime.parse(time.toString(), DateTimeFormatter.ISO_ZONED_DATE_TIME);
+// convert the date and time to the Central European Time zone
+
+        ZonedDateTime cetDateTime = utcDateTime.withZoneSameInstant(cetZoneId);
+
+// format the date and time in the CET time zone
+
+        String formattedDateTime = cetDateTime.format(formatter);
+        return OffsetDateTime.parse(formattedDateTime);
     }
 }
