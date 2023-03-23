@@ -64,12 +64,13 @@ public class BookingController {
      * Changes the time of a booking.
      *
      * @param token The token of the booking to change
-     * @param time  The new time for the booking
+     * @param timeStart  The new start time for the booking
+     * @param timeEnd  The new End time for the booking
      * @return A response indicating whether the booking was changed successfully or not
      */
     @PostMapping("/changeBooking")
-    public ResponseEntity<Response> changeBooking(@RequestParam String token, @RequestParam OffsetDateTime time) {
-        return bookingService.changeBooking(token, time);
+    public ResponseEntity<Response> changeBooking(@RequestParam String token, @RequestParam OffsetDateTime timeStart, @RequestParam OffsetDateTime timeEnd) {
+        return bookingService.changeBooking(token, timeStart, timeEnd);
     }
 
     /**
@@ -108,12 +109,9 @@ public class BookingController {
      * @return a ResponseBody containing a message if the process was successful or not.
      */
     @DeleteMapping("/cleanBookings")
-    public ResponseEntity<?> cleanBookings() {
-        if (bookingService.bookingCleanup()) {
-            return ResponseEntity.status(200).body("{\"Booking cleanup successful\"}");
-        }
+    public ResponseEntity<Response> cleanBookings() {
+        return bookingService.bookingCleanup();
 
-        return ResponseEntity.status(400).body("{\"error\":\"something went wrong during cleanup\"}");
     }
 
 }
