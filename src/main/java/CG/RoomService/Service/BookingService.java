@@ -40,7 +40,7 @@ public class BookingService {
         if (isBookingExist(token)){
             return ResponseEntity.status(200).body(bookingRepository.findByToken(token));
         }
-        return ResponseEntity.status(400).body("{\"error\":\"Booking does not exist!\"}");
+        return ResponseEntity.status(400).body("Booking does not exist!");
     }
 
     @Transactional
@@ -48,10 +48,10 @@ public class BookingService {
         Room room = roomRepository.findByName(booking.getRoom().getName());
         Optional<User> optionalUser = userRepository.findByEmail(booking.getUser().getEmail());
         if (optionalUser.isEmpty()) {
-            return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"Booking failed, User does not exist\"}"));
+            return ResponseEntity.status(400).body(new ExceptionResponse("Booking failed, User does not exist"));
         }
         if (room.isBooked(booking.getTimeStart())) {
-            return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"Booking failed, Room is already booked for that timeslot\"}"));
+            return ResponseEntity.status(400).body(new ExceptionResponse("Booking failed, Room is already booked for that timeslot"));
         }
         User user = optionalUser.get();
         user.makeBooking(booking);
@@ -73,25 +73,25 @@ public class BookingService {
                 user.cancelBooking(booking);
                 roomRepository.save(room);
                 userRepository.save(user);
-                return ResponseEntity.status(200).body(new MessageResponse("{\"booking removed\"}"));
+                return ResponseEntity.status(200).body(new MessageResponse("booking removed"));
             }
-            return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\": \"Booking can only be deleted by the user who created it\"}"));
+            return ResponseEntity.status(400).body(new ExceptionResponse("Booking can only be deleted by the user who created it"));
         }
-        return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\": \"booking does not exist!\"}"));
+        return ResponseEntity.status(400).body(new ExceptionResponse("booking does not exist!"));
     }
 
     public ResponseEntity<Response> changeBooking(String token, OffsetDateTime time) {
         if (isBookingExist(token)) {
             Booking booking = bookingRepository.findByToken(token);
             if (booking.getRoom().isBooked(time)){
-                return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"Room is already booked for that timeslot!\"}"));
+                return ResponseEntity.status(400).body(new ExceptionResponse("Room is already booked for that timeslot!"));
             }
             booking.setTimeStart(time);
             booking.setTimeEnd(time.plusHours(1));
             bookingRepository.save(booking);
-            return ResponseEntity.status(200).body(new MessageResponse("{\"booking changed to " + time + "\"}"));
+            return ResponseEntity.status(200).body(new MessageResponse("booking changed to " + time + ""));
         }
-        return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"booking does not exist!\"}"));
+        return ResponseEntity.status(400).body(new ExceptionResponse("booking does not exist!"));
     }
 
     public boolean isBookingExist(String token) {
@@ -112,7 +112,7 @@ public class BookingService {
             User user = optionalUser.get();
             return ResponseEntity.status(200).body(new BookingListResponse(bookingRepository.findByUser(user)));
         }
-        return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"User with Email '" + email + "' does not exist\"}"));
+        return ResponseEntity.status(400).body(new ExceptionResponse("User with Email '" + email + "' does not exist"));
     }
 
     public ResponseEntity<Response> getBookingsByRoom(String roomName) {
@@ -120,19 +120,21 @@ public class BookingService {
             Room room = roomRepository.findByName(roomName);
             return ResponseEntity.status(200).body(new BookingListResponse(bookingRepository.findByRoom(room)));
         }
-        return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"Room does not exist\"}"));
+        return ResponseEntity.status(400).body(new ExceptionResponse("Room does not exist"));
 
     }
 
-    public boolean bookingCleanup() {
+    public ResponseEntity<Response> bookingCleanup() {
         OffsetDateTime current = OffsetDateTime.now();
         List<Booking> bookingList = bookingRepository.findAll();
+        int i = 0;
         for (Booking booking: bookingList) {
             if (booking.getTimeEnd().isBefore(current)) {
                 cancelBooking(booking.getUser().getEmail(), booking.getToken());
+                i++;
             }
         }
-        return true;
+        return ResponseEntity.status(200).body(new MessageResponse("Booking cleanup successful, deleted: " + i + " Bookings"));
     }
 
 

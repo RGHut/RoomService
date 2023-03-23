@@ -58,9 +58,9 @@ public class BuildingService {
             roomRepository.save(room);
             buildingRepository.save(building);
 
-            return ResponseEntity.status(200).body(new MessageResponse("{\"created\":\"" + room.getName() + "\"}"));
+            return ResponseEntity.status(200).body(new MessageResponse("created:" + room.getName()));
         } else {
-            return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"Building does not exists!\"}"));
+            return ResponseEntity.status(400).body(new ExceptionResponse("Building does not exists!"));
         }
     }
 
@@ -71,9 +71,9 @@ public class BuildingService {
                 deleteRoomHard(room.getName());
             }
             buildingRepository.delete(building);
-            return ResponseEntity.status(200).body(new MessageResponse("{\"Deleted\":\"" + name + " and all its rooms\"}"));
+            return ResponseEntity.status(200).body(new MessageResponse("Deleted:" + name + " and all its rooms"));
         }
-        return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"building does not exist\"}"));
+        return ResponseEntity.status(400).body(new ExceptionResponse("building does not exist"));
     }
 
 
@@ -89,9 +89,9 @@ public class BuildingService {
             building.removeRoom(room);
             roomRepository.delete(room);
             buildingRepository.save(building);
-            return ResponseEntity.status(200).body(new MessageResponse("{\"Deleted\":\"" + name+ "\"}"));
+            return ResponseEntity.status(200).body(new MessageResponse("Deleted:" + name));
         }
-        return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"room does not exist\"}"));
+        return ResponseEntity.status(400).body(new ExceptionResponse("error:room does not exist"));
     }
 
     public ResponseEntity<Response> deleteRoom(String name) {
@@ -100,9 +100,9 @@ public class BuildingService {
             if (room.getBookings().isEmpty()) {
                 return deleteRoomHard(name);
             }
-            return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"Unable to delete a room that still has active bookings\"}"));
+            return ResponseEntity.status(400).body(new ExceptionResponse("Unable to delete a room that still has active bookings"));
         }
-        return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"room does not exist\"}"));
+        return ResponseEntity.status(400).body(new ExceptionResponse("room does not exist"));
     }
 
     public boolean isBuildingExist(String name) {
@@ -127,8 +127,8 @@ public class BuildingService {
             if (isRoomExist(roomName)) {
                 return ResponseEntity.status(200).body(roomRepository.findByName(roomName));
             }
-            return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"room does not exist\"}"));
+            return ResponseEntity.status(400).body(new ExceptionResponse("room does not exist"));
         }
-        return ResponseEntity.status(400).body(new ExceptionResponse("{\"error\":\"building does not exist\"}"));
+        return ResponseEntity.status(400).body(new ExceptionResponse("building does not exist"));
     }
 }

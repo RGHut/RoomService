@@ -108,12 +108,9 @@ public class BookingController {
      * @return a ResponseBody containing a message if the process was successful or not.
      */
     @DeleteMapping("/cleanBookings")
-    public ResponseEntity<?> cleanBookings() {
-        if (bookingService.bookingCleanup()) {
-            return ResponseEntity.status(200).body("{\"Booking cleanup successful\"}");
-        }
+    public ResponseEntity<Response> cleanBookings() {
+        return bookingService.bookingCleanup();
 
-        return ResponseEntity.status(400).body("{\"error\":\"something went wrong during cleanup\"}");
     }
 
 }
