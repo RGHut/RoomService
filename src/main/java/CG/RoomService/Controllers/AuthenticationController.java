@@ -46,14 +46,14 @@ public class AuthenticationController {
      */
     @GetMapping("/testData")
     public ResponseEntity<?> generateData() {
-        Building building = new Building("test1");
-        Room room1 = new Room("test 1.1", 1, 4, true);
+        Building building = new Building("Laan Corpus den Hoorn 106");
+        Room room1 = new Room("A1.2 small meeting room", 1, 4, true);
         room1.setBuilding(building);
-        Room room2 = new Room("test 1.2", 1, 4, true);
+        Room room2 = new Room("A1.5 large meeting room", 1, 8, true);
         room2.setBuilding(building);
 
-        if (!buildingService.isBuildingExist("test1")) {
-            buildingService.addBuilding("test1");
+        if (!buildingService.isBuildingExist("Laan Corpus den Hoorn 106")) {
+            buildingService.addBuilding("Laan Corpus den Hoorn 106");
             buildingService.addRoom(room1);
             buildingService.addRoom(room2);
             RegisterRequest request = new RegisterRequest("test1", "lastName", "test1@cg.nl", "12345", "cg");
@@ -75,7 +75,7 @@ public class AuthenticationController {
      */
     @GetMapping("/testBooking")
     public ResponseEntity<?> GenerateBooking() {
-        if (buildingService.isBuildingExist("test1")) {
+        if (buildingService.isBuildingExist("Laan Corpus den Hoorn 106")) {
             Optional<User> optionalUser1 =userService.findByEmail("test1@cg.nl");
             Optional<User> optionalUser2 =userService.findByEmail("test2@cg.nl");
             Optional<User> optionalUser3 =userService.findByEmail("test3@cg.nl");
@@ -83,8 +83,8 @@ public class AuthenticationController {
                 User user1 = optionalUser1.get();
                 User user2 = optionalUser2.get();
                 User user3 = optionalUser3.get();
-                Room room1 = buildingService.getRoom("test 1.1");
-                Room room2 = buildingService.getRoom("test 1.2");
+                Room room1 = buildingService.getRoom("A1.2 small meeting room");
+                Room room2 = buildingService.getRoom("A1.5 large meeting room");
                 Booking booking1 = new Booking(room1, OffsetDateTime.now().plusHours(1).truncatedTo(ChronoUnit.HOURS), user1);
                 bookingService.makeBooking(booking1);
                 Booking booking2 = new Booking(room1, OffsetDateTime.now().plusHours(3).truncatedTo(ChronoUnit.HOURS), user2);
