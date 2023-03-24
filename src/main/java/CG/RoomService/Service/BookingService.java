@@ -10,6 +10,7 @@ import CG.RoomService.Models.Responses.Response;
 import CG.RoomService.Repositories.BookingRepository;
 import CG.RoomService.Repositories.RoomRepository;
 import CG.RoomService.Repositories.UserRepository;
+import CG.RoomService.Utility.Utility;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -45,21 +46,27 @@ public class BookingService {
 
     @Transactional
     public ResponseEntity<Response> makeBooking(Booking booking) {
-        Room room = roomRepository.findByName(booking.getRoom().getName());
-        Optional<User> optionalUser = userRepository.findByEmail(booking.getUser().getEmail());
-        if (optionalUser.isEmpty()) {
-            return ResponseEntity.status(400).body(new ExceptionResponse("Booking failed, User does not exist"));
+        if (isFuture(booking.getTimeEnd())) {
+            if (!roomRepository.existsRoomByName(booking.getRoom().getName())) {
+                return ResponseEntity.status(400).body(new ExceptionResponse("Booking failed, Room does not exist"));
+            }
+            Room room = roomRepository.findByName(booking.getRoom().getName());
+            Optional<User> optionalUser = userRepository.findByEmail(booking.getUser().getEmail());
+            if (optionalUser.isEmpty()) {
+                return ResponseEntity.status(400).body(new ExceptionResponse("Booking failed, User does not exist"));
+            }
+            if (room.isBooked(booking.getTimeStart(), booking.getTimeEnd())) {
+                return ResponseEntity.status(400).body(new ExceptionResponse("Booking failed, Room is already booked for that timeslot"));
+            }
+            User user = optionalUser.get();
+            user.makeBooking(booking);
+            room.makeBooking(booking);
+            bookingRepository.save(booking);
+            userRepository.save(user);
+            roomRepository.save(room);
+            return ResponseEntity.status(200).body(new MessageResponse(booking.getToken()));
         }
-        if (room.isBooked(booking.getTimeStart(), booking.getTimeEnd())) {
-            return ResponseEntity.status(400).body(new ExceptionResponse("Booking failed, Room is already booked for that timeslot"));
-        }
-        User user = optionalUser.get();
-        user.makeBooking(booking);
-        room.makeBooking(booking);
-        bookingRepository.save(booking);
-        userRepository.save(user);
-        roomRepository.save(room);
-        return ResponseEntity.status(200).body(new MessageResponse(booking.getToken()));
+        return ResponseEntity.status(400).body(new ExceptionResponse("Booking failed, cannot make a booking for the past"));
     }
 
     public ResponseEntity<Response> cancelBooking(String email, String token) {
@@ -81,17 +88,20 @@ public class BookingService {
     }
 
     public ResponseEntity<Response> changeBooking(String token, OffsetDateTime timeStart, OffsetDateTime timeEnd) {
-        if (isBookingExist(token)) {
-            Booking booking = bookingRepository.findByToken(token);
-            if (booking.getRoom().isBooked(timeStart, timeEnd)){
-                return ResponseEntity.status(400).body(new ExceptionResponse("Room is already booked for that timeslot!"));
+        if (isFuture(timeEnd)) {
+            if (isBookingExist(token)) {
+                Booking booking = bookingRepository.findByToken(token);
+                if (booking.getRoom().isBooked(timeStart, timeEnd)) {
+                    return ResponseEntity.status(400).body(new ExceptionResponse("Room is already booked for that timeslot!"));
+                }
+                booking.setTimeStart(timeStart);
+                booking.setTimeEnd(timeEnd);
+                bookingRepository.save(booking);
+                return ResponseEntity.status(200).body(new MessageResponse("booking changed to " + timeStart + "-" + timeEnd));
             }
-            booking.setTimeStart(timeStart);
-            booking.setTimeEnd(timeEnd);
-            bookingRepository.save(booking);
-            return ResponseEntity.status(200).body(new MessageResponse("booking changed to " + timeStart + "-" + timeEnd));
+            return ResponseEntity.status(400).body(new ExceptionResponse("booking does not exist!"));
         }
-        return ResponseEntity.status(400).body(new ExceptionResponse("booking does not exist!"));
+        return ResponseEntity.status(400).body(new ExceptionResponse("cannot change a booking to the past"));
     }
 
     public boolean isBookingExist(String token) {
@@ -129,7 +139,7 @@ public class BookingService {
         List<Booking> bookingList = bookingRepository.findAll();
         int i = 0;
         for (Booking booking: bookingList) {
-            if (booking.getTimeEnd().isBefore(current)) {
+            if (!isFuture(booking.getTimeEnd())) {
                 cancelBooking(booking.getUser().getEmail(), booking.getToken());
                 i++;
             }
@@ -137,5 +147,8 @@ public class BookingService {
         return ResponseEntity.status(200).body(new MessageResponse("Booking cleanup successful, deleted: " + i + " Bookings"));
     }
 
+    public boolean isFuture(OffsetDateTime timeEnd) {
+        return (Utility.timeConverter(timeEnd).isAfter(Utility.timeConverter(OffsetDateTime.now())));
+    }
 
 }

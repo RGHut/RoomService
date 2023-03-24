@@ -18,6 +18,8 @@ public class Booking {
     @JoinColumn(name = "room_name", referencedColumnName = "name", nullable = false)
     @JsonBackReference(value = "room")
     private Room room;
+    @Column(name = "booked_room")
+    private String roomname;
     @Column(name = "token", unique = true)
     private String token;
     @Column(name = "timeStart", nullable = false)
@@ -29,7 +31,6 @@ public class Booking {
     @JoinColumn(name = "user_email", referencedColumnName = "email", nullable = false)
     @JsonBackReference(value = "user")
     private User user;
-
     @Column(name = "reserved_by")
     private String userEmail;
 
@@ -43,6 +44,7 @@ public class Booking {
         this.timeEnd = timeEnd;
         this.user = user;
         this.userEmail = user.getEmail();
+        this.roomname = room.getName();
     }
 
     public Booking(Room room, OffsetDateTime timeStart, User user) {
@@ -100,5 +102,13 @@ public class Booking {
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
+    }
+
+    public String getRoomname() {
+        return roomname;
+    }
+
+    public void setRoomname(String roomname) {
+        this.roomname = roomname;
     }
 }
