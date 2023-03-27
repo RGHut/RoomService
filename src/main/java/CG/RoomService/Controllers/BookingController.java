@@ -101,6 +101,7 @@ public class BookingController {
      */
     @PostMapping("/getBookingByRoom")
     public ResponseEntity<Response> getBookingsByRoom(@RequestParam String roomName) {
+        cleanBookings();
         return bookingService.getBookingsByRoom(roomName);
     }
 
