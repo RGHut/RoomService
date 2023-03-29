@@ -7,12 +7,10 @@ import CG.RoomService.Models.Enums.Role;
 import CG.RoomService.Models.DataModels.User;
 import CG.RoomService.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -50,14 +48,6 @@ public class AuthenticationService {
     }
 
     /**
-     * Authenticate an existing user
-     *
-     * @param request AuthenticationRequest object containing user email and password
-     * @return AuthenticationResponse object containing JWT token
-     */
-
-
-    /**
      * List all users
      *
      * @return List of User objects
@@ -66,9 +56,12 @@ public class AuthenticationService {
         return repository.findAll();
     }
 
-    @Autowired
-    private RestTemplate restTemplate;
-
+    /**
+     * Authenticate an existing user
+     *
+     * @param request AuthenticationRequest object containing user email and password
+     * @return AuthenticationResponse object containing JWT token
+     */
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -79,10 +72,9 @@ public class AuthenticationService {
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
-        AuthenticationResponse response = AuthenticationResponse.builder()
+
+        return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
-
-        return response;
     }
 }

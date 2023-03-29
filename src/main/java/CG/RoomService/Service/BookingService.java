@@ -117,8 +117,8 @@ public class BookingService {
     }
 
     public ResponseEntity<Response> getBookingsByUser(String email) {
-        if (isUserExistByEmail(email)) {
-            Optional<User> optionalUser = userRepository.findByEmail(email);
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             return ResponseEntity.status(200).body(new BookingListResponse(bookingRepository.findByUser(user)));
         }
@@ -135,7 +135,6 @@ public class BookingService {
     }
 
     public ResponseEntity<Response> bookingCleanup() {
-        OffsetDateTime current = OffsetDateTime.now();
         List<Booking> bookingList = bookingRepository.findAll();
         int i = 0;
         for (Booking booking: bookingList) {

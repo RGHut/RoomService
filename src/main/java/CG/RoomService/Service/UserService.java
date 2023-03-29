@@ -18,22 +18,21 @@ public class UserService {
 
     private final BookingService bookingService;
 
-    public User create(User user) {
-        return userRepository.save(user);
-    }
-
     public User update(User user) {
         return userRepository.save(user);
     }
 
     public void delete(int id) {
-        User user = userRepository.findById(id).get();
-        if (!user.getBookings().isEmpty()) {
-            for (Booking booking: user.getBookings()) {
-                bookingService.cancelBooking(booking.getUser().getEmail(), booking.getToken());
+        Optional<User> OptionalUser = userRepository.findById(id);
+        if (OptionalUser.isPresent()) {
+            User user = OptionalUser.get();
+            if (!user.getBookings().isEmpty()) {
+                for (Booking booking : user.getBookings()) {
+                    bookingService.cancelBooking(booking.getUser().getEmail(), booking.getToken());
+                }
             }
+            userRepository.deleteById(id);
         }
-        userRepository.deleteById(id);
     }
 
     public Optional<User> findByEmail(String email) {
