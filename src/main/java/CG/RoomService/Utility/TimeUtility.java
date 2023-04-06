@@ -5,7 +5,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-public final class Utility {
+public final class TimeUtility {
 
     public static OffsetDateTime timeConverter(OffsetDateTime time) {
         ZoneId cetZoneId = ZoneId.of("Europe/Paris"); // you can replace "Europe/Paris" with the appropriate time zone ID

@@ -1,6 +1,6 @@
 package CG.RoomService.Models.DataModels;
 
-import CG.RoomService.Utility.Utility;
+import CG.RoomService.Utility.TimeUtility;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -115,12 +115,12 @@ public class Room {
     public boolean isBooked(OffsetDateTime timeStart, OffsetDateTime timeEnd) {
         boolean booked = false;
 
-        OffsetDateTime cTimeStart = Utility.timeConverter(timeStart);
-        OffsetDateTime cTimeEnd = Utility.timeConverter(timeEnd);
+        OffsetDateTime cTimeStart = TimeUtility.timeConverter(timeStart);
+        OffsetDateTime cTimeEnd = TimeUtility.timeConverter(timeEnd);
 
         for (Booking booking : bookings) {
-            OffsetDateTime bookingStart = Utility.timeConverter(booking.getTimeStart());
-            OffsetDateTime bookingEnd = Utility.timeConverter(booking.getTimeEnd());
+            OffsetDateTime bookingStart = TimeUtility.timeConverter(booking.getTimeStart());
+            OffsetDateTime bookingEnd = TimeUtility.timeConverter(booking.getTimeEnd());
 
             if (cTimeStart.isAfter(bookingStart) && cTimeStart.isBefore(bookingEnd)) {
                 booked = true;

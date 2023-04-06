@@ -10,7 +10,7 @@ import CG.RoomService.Models.Responses.Response;
 import CG.RoomService.Repositories.BookingRepository;
 import CG.RoomService.Repositories.RoomRepository;
 import CG.RoomService.Repositories.UserRepository;
-import CG.RoomService.Utility.Utility;
+import CG.RoomService.Utility.TimeUtility;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -147,7 +147,7 @@ public class BookingService {
     }
 
     public boolean isFuture(OffsetDateTime timeEnd) {
-        return (Utility.timeConverter(timeEnd).isAfter(Utility.timeConverter(OffsetDateTime.now())));
+        return (TimeUtility.timeConverter(timeEnd).isAfter(TimeUtility.timeConverter(OffsetDateTime.now())));
     }
 
 }
