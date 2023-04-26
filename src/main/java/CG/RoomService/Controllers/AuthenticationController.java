@@ -9,7 +9,6 @@ import CG.RoomService.Models.Requests.RegisterRequest;
 import CG.RoomService.Models.Responses.ExceptionResponse;
 import CG.RoomService.Models.Responses.Response;
 import CG.RoomService.Service.AuthenticationService;
-import CG.RoomService.Repositories.RoomRepository;
 import CG.RoomService.Service.BookingService;
 import CG.RoomService.Service.BuildingService;
 import CG.RoomService.Service.UserService;
@@ -34,7 +33,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-
+    /**
+     * The service instance being used to perform authentication and registration operations
+     */
+    private final AuthenticationService service;
     private final BuildingService buildingService;
     private final BookingService bookingService;
     private final UserService userService;
@@ -108,12 +110,6 @@ public class AuthenticationController {
         return ResponseEntity.status(400).body("{\"error\":\"Test date doesn't exist run /testData first\"}");
     }
 
-
-    /**
-     * The service instance being used to perform authentication and registration operations
-     */
-    private final AuthenticationService service;
-    private final RoomRepository roomRepository;
 
     /**
      * The PostMapping annotation is used to handle HTTP POST requests.

@@ -1,13 +1,11 @@
 package CG.RoomService.Models.DataModels;
 
+import CG.RoomService.Utility.TimeUtility;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +34,8 @@ public class Room {
     @JoinColumn(name = "building_name", referencedColumnName = "name", nullable = false)
     @JsonBackReference(value = "building")
     private Building building;
+    @Column(name = "in_building")
+    private String buildingName;
 
     public Room(String name, int floor, int maxOccupancy, boolean isAccessible) {
         this.name = name;
@@ -115,12 +115,12 @@ public class Room {
     public boolean isBooked(OffsetDateTime timeStart, OffsetDateTime timeEnd) {
         boolean booked = false;
 
-        OffsetDateTime cTimeStart = timeConverter(timeStart);
-        OffsetDateTime cTimeEnd = timeConverter(timeEnd);
+        OffsetDateTime cTimeStart = TimeUtility.timeConverter(timeStart);
+        OffsetDateTime cTimeEnd = TimeUtility.timeConverter(timeEnd);
 
         for (Booking booking : bookings) {
-            OffsetDateTime bookingStart = timeConverter(booking.getTimeStart());
-            OffsetDateTime bookingEnd = timeConverter(booking.getTimeEnd());
+            OffsetDateTime bookingStart = TimeUtility.timeConverter(booking.getTimeStart());
+            OffsetDateTime bookingEnd = TimeUtility.timeConverter(booking.getTimeEnd());
 
             if (cTimeStart.isAfter(bookingStart) && cTimeStart.isBefore(bookingEnd)) {
                 booked = true;
@@ -141,18 +141,11 @@ public class Room {
         isAccessible = accessible;
     }
 
-    private OffsetDateTime timeConverter(OffsetDateTime time) {
-        ZoneId cetZoneId = ZoneId.of("Europe/Paris"); // you can replace "Europe/Paris" with the appropriate time zone ID
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+    public String getBuildingName() {
+        return buildingName;
+    }
 
-        ZonedDateTime utcDateTime = ZonedDateTime.parse(time.toString(), DateTimeFormatter.ISO_ZONED_DATE_TIME);
-// convert the date and time to the Central European Time zone
-
-        ZonedDateTime cetDateTime = utcDateTime.withZoneSameInstant(cetZoneId);
-
-// format the date and time in the CET time zone
-
-        String formattedDateTime = cetDateTime.format(formatter);
-        return OffsetDateTime.parse(formattedDateTime);
+    public void setBuildingName(String buildingName) {
+        this.buildingName = buildingName;
     }
 }
